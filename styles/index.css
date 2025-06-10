@@ -194,7 +194,7 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background-color: rgb(27, 27, 27);
+  background: url("../assets/img/card_background3.jpg");
   border-radius: 10px;
   margin: 10px;
   padding: 10px;
@@ -208,31 +208,52 @@ body {
 
 .overview-card-balance {
   width: 500px;
-  height: 300px;
   max-width: 550px;
-  background-color: #1b1b1b;
   border-radius: 12px;
-  margin: 10px auto;
   padding: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   color: #fff;
   transition: transform 0.3s;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .overview-card-balance .balance-section {
   flex: 1;
 }
 
-.overview-card-balance .quick-actions {
+.balance-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.overview-card-balance {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  display: flex;
+}
+
+.unecessary {
+  display: none;
 }
 
 .quick-action-btn {
-  background-color: #292929;
+  background-color: black;
   border: none;
   border-radius: 50%;
   width: 44px;
@@ -240,13 +261,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: white;
   font-size: 1.2rem;
   transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 .quick-action-btn:hover {
-  background-color: #383838;
+  background-color: white;
+  color: black;
+  cursor: pointer;
 }
 
 /* ========== UI COMPONENTS ========== */
