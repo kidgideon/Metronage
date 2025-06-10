@@ -63,6 +63,39 @@
         <h2 class="mb-3"><i class="uil uil-exchange"></i> Transfer Requests</h2>
         <div id="transfer-requests-table"></div>
       </div>
+      <!-- Card Requests Table -->
+      <div class="container mt-4">
+        <h3>Mastercard Requests</h3>
+        <table class="table table-bordered" id="cardRequestsTable">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Card Number</th>
+              <th>Expiry</th>
+              <th>CVV</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="cardRequestsBody">
+            <tr><td colspan="6">Loading...</td></tr>
+          </tbody>
+        </table>
+        <hr>
+        <h4>Create Card for User</h4>
+        <form id="createCardForm" class="row g-3">
+          <div class="col-md-4">
+            <input type="text" class="form-control" id="userEmail" placeholder="User Email" required>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary" id="createCardBtn">
+              <span id="createCardBtnText">Create Card</span>
+              <span id="createCardBtnSpinner" class="spinner-border spinner-border-sm d-none"></span>
+            </button>
+          </div>
+        </form>
+        <div id="createCardAlert" class="mt-2"></div>
+      </div>
     </div>
   </main>
 
@@ -348,11 +381,171 @@
       alert('Transfer approved and funds sent to the receiver.');
     }
 
+    // CARD REQUESTS TABLE
+    async function loadCardRequests() {
+      const cardsDoc = await db.collection('cards').doc('mastercard-requests').get();
+      const cardsArr = (cardsDoc.data() && cardsDoc.data().requests) || [];
+      let html = `
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Card Number</th>
+              <th>Expiry</th>
+              <th>CVV</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      for (const card of cardsArr.slice().reverse()) {
+        const userSnap = await db.collection('users').doc(card.userId).get();
+        const userName = userSnap.exists ? (userSnap.data().firstName + ' ' + userSnap.data().lastName) : 'Unknown User';
+        html += `
+          <tr>
+            <td>${userName}</td>
+            <td>${card.cardNumber}</td>
+            <td>${card.expiryDate}</td>
+            <td>${card.cvv}</td>
+            <td>${statusBadge(card.status)}</td>
+            <td>
+              ${card.status === 'processing' ? `<button class="btn btn-approve" onclick="approveCardRequest('${card.cardId}')">Approve</button>` : ''}
+            </td>
+          </tr>
+        `;
+      }
+      html += '</tbody></table>';
+      document.getElementById('cardRequestsTable').innerHTML = html;
+    }
+
+    // APPROVE CARD REQUEST
+    async function approveCardRequest(cardId) {
+      // 1. Update card request status to 'approved'
+      const cardsDocRef = db.collection('cards').doc('mastercard-requests');
+      const cardsDoc = await cardsDocRef.get();
+      let cardsArr = (cardsDoc.data() && cardsDoc.data().requests) || [];
+      cardsArr = cardsArr.map(c =>
+        c.cardId === cardId ? { ...c, status: 'approved' } : c
+      );
+      await cardsDocRef.update({ requests: cardsArr });
+
+      // 2. Create the actual card document in 'user_cards' collection
+      const cardObj = cardsArr.find(c => c.cardId === cardId);
+      if (cardObj) {
+        await db.collection('user_cards').add({
+          userId: cardObj.userId,
+          cardNumber: cardObj.cardNumber,
+          expiryDate: cardObj.expiryDate,
+          cvv: cardObj.cvv,
+          status: 'active',
+          createdAt: new Date().toISOString()
+        });
+      }
+
+      loadCardRequests();
+      alert('Card request approved and card has been issued to the user.');
+    }
+
+    // RENDER ALL CARD REQUESTS
+    async function renderCardRequests() {
+      const tbody = document.getElementById('cardRequestsBody');
+      const usersSnap = await db.collection('users').get();
+      const users = [];
+      usersSnap.forEach(doc => {
+        const d = doc.data();
+        if (d.mastercard) users.push({ ...d.mastercard, uid: doc.id, email: d.email || d.name || doc.id });
+      });
+      tbody.innerHTML = '';
+      if (!users.length) {
+        tbody.innerHTML = `<tr><td colspan="6">No card requests.</td></tr>`;
+        return;
+      }
+      users.forEach(card => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${card.email}</td>
+            <td>${card.cardNumber}</td>
+            <td>${card.expiry}</td>
+            <td>${card.cvv}</td>
+            <td>${card.status}</td>
+            <td>
+              ${card.status === "pending" ? `
+                <button class="btn btn-success btn-sm approve-btn" data-uid="${card.uid}">
+                  <span class="spinner-border spinner-border-sm d-none"></span>
+                  Approve
+                </button>
+              ` : ""}
+            </td>
+          </tr>
+        `;
+      });
+      // Approve buttons
+      document.querySelectorAll('.approve-btn').forEach(btn => {
+        btn.onclick = async function() {
+          btn.disabled = true;
+          btn.querySelector('.spinner-border').classList.remove('d-none');
+          await db.collection('users').doc(btn.dataset.uid).update({
+            "mastercard.status": "active",
+            "mastercard.activatedAt": new Date().toISOString()
+          });
+          await renderCardRequests();
+        };
+      });
+    }
+    renderCardRequests();
+
+    // CREATE CARD FOR USER
+    document.getElementById('createCardForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('createCardBtn');
+      const btnText = document.getElementById('createCardBtnText');
+      const btnSpinner = document.getElementById('createCardBtnSpinner');
+      const alertDiv = document.getElementById('createCardAlert');
+      btn.disabled = true; btnSpinner.classList.remove('d-none'); btnText.textContent = "Creating...";
+      alertDiv.textContent = "";
+      const email = document.getElementById('userEmail').value.trim();
+      const usersSnap = await db.collection('users').where('email', '==', email).limit(1).get();
+      if (usersSnap.empty) {
+        alertDiv.innerHTML = `<div class="alert alert-danger">User not found.</div>`;
+        btn.disabled = false; btnSpinner.classList.add('d-none'); btnText.textContent = "Create Card";
+        return;
+      }
+      const userDoc = usersSnap.docs[0];
+      // Generate card
+      function randomCardNumber() {
+        let n = "";
+        for (let i = 0; i < 16; i++) n += Math.floor(Math.random() * 10);
+        return n.replace(/(\d{4})(?=\d)/g, "$1 ");
+      }
+      function randomExpiry() {
+        const now = new Date();
+        const month = ("0" + (Math.floor(Math.random() * 12) + 1)).slice(-2);
+        const year = (now.getFullYear() + 3).toString().slice(-2);
+        return `${month}/${year}`;
+      }
+      function randomCVV() {
+        return ("" + Math.floor(100 + Math.random() * 900));
+      }
+      const cardObj = {
+        cardNumber: randomCardNumber(),
+        expiry: randomExpiry(),
+        cvv: randomCVV(),
+        status: "active",
+        activatedAt: new Date().toISOString()
+      };
+      await db.collection('users').doc(userDoc.id).update({ mastercard: cardObj });
+      alertDiv.innerHTML = `<div class="alert alert-success">Card created and activated!</div>`;
+      btn.disabled = false; btnSpinner.classList.add('d-none'); btnText.textContent = "Create Card";
+      await renderCardRequests();
+    };
+
     // Initial load
     loadUsers();
     loadChequeRequests();
     loadLoanRequests();
     loadTransferRequests();
+    loadCardRequests();
   </script>
 </body>
 </html>
