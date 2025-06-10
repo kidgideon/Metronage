@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loan Application - Geex Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@iconscout/unicons@4.0.8/css/line.min.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon.svg">
+  <link rel="stylesheet" href="./styles/index.css">
+  
+<style>
+  body { font-family: 'Jost', sans-serif; background: black; color: #343a40; }
+  .main-content {  padding: 2rem 1rem; justify-content: center; align-items: center; display: flex; flex-direction: column; background-color: blue; width: 100%;}
+  .scrollable-area{width: 100%; display: flex; justify-content: center; align-items: center;}
+  .container { max-width: 600px; margin: 0 auto; }
+  .dashboard-card { background: rgb(41, 41, 41); border-radius: 1.25rem; box-shadow: 0 2px 24px 0 rgba(80,80,120,0.08); padding: 2rem; margin-bottom: 2rem; width: 450px;}
+  .form-group { margin-bottom: 1.5rem; }
+  .form-label { font-weight: 500; color: #6a82fb; margin-bottom: .3rem; display: block; }
+  .form-control { width: 90%; padding: .7rem 1rem; border: 1px solid #e5e7eb; border-radius: .5rem; font-size: 1rem; background: #fafbfc; margin-bottom: 0.5rem; }
+  .form-control:focus { border-color: #6a82fb; outline: none; }
+  .btn { display: inline-block; font-weight: 500; border: none; border-radius: .5rem; padding: .7rem 1.5rem; font-size: 1rem; cursor: pointer; background-color: black; color: #fff; transition: background .2s; }
+  .btn:disabled { opacity: .7; cursor: not-allowed; }
+  .alert { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+  .alert-info { background: #d1ecf1; color: #0c5460; }
+  .alert-danger { background: #f8d7da; color: #721c24; }
+  .alert-success { background: #d4edda; color: #155724; }
+  .badge { display: inline-block; padding: 0.35em 0.7em; font-size: 0.9em; border-radius: 0.5em; }
+  .badge-processing { background: #fff3cd; color: #856404; }
+  .badge-approved { background: #d4edda; color: #155724; }
+  .badge-rejected { background: #f8d7da; color: #721c24; }
+  .mb-3 { margin-bottom: 1rem; }
+  .mb-4 { margin-bottom: 1.5rem; }
+  @media (max-width: 991.98px) {
+    .main-content { margin-left: 0; padding: 1rem; }
+    body {
+      padding-left: 0px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <div class="geex-sidebar" id="sidebarNav">
+      <div class="geex-sidebar__wrapper">
+        <div class="geex-sidebar__header">
+          <a class='geex-sidebar__logo' href='index.html'>
+            <img src="assets/img/logo-dark.svg" alt="logo" />
+          </a>
+        </div>
+        <nav class="geex-sidebar__menu-wrapper">
+          <ul class="geex-sidebar__menu">
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="index.html">
+                <i class="uil uil-money-bill"></i>
+                <p>Dashboard</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="cheque.html">
+                <i class="uil uil-money-bill"></i>
+                <p>Cheque</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="send-receive.html">
+                <i class="uil uil-exchange"></i>
+                <p>Send/Receive</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="account.html">
+                <i class="uil uil-user"></i>
+                <p>Account</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="settings.html">
+                <i class="uil uil-cog"></i>
+                <p>Settings</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="transactions.html">
+                <i class="uil uil-list-ul"></i>
+                <p>Transactions</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link active" href="loan.html">
+                <i class="uil uil-money-withdraw"></i> 
+                <p>Loan</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="scrollable-area">
+      <!-- Mobile Top Navbar (visible on mobile only) -->
+      <nav class="mobile-navbar d-lg-none">
+        <div class="mobile-navbar-inner">
+          <!-- Hamburger toggle with ID for JavaScript -->
+          <svg id="sidebarToggle" class="hamburger-toggle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </div>
+      </nav>
+      <div class="row g-4 mb-4 pt-4">
+        <div class="col-12">
+          <div class="dashboard-card p-4 h-100 w-100">
+            <h2 class="mb-3"><i class="uil uil-money-withdraw"></i> Apply for a Loan</h2>
+            <div id="loan-info" class="mb-3"></div>
+            <form id="loanForm">
+              <div class="form-group mb-3">
+                <label class="form-label" for="loanAmount">Loan Amount (USD)</label>
+                <input type="number" class="form-control" id="loanAmount" min="1" required>
+              </div>
+              <div class="form-group mb-3">
+                <label class="form-label" for="loanPurpose">Purpose</label>
+                <input type="text" class="form-control" id="loanPurpose" maxlength="100" required>
+              </div>
+              <button type="submit" class="btn btn-primary" id="loanSubmitBtn">Apply</button>
+            </form>
+            <div id="loanAlert" class="mt-3"></div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="dashboard-card-loan p-4 h-100 w-100">
+            <h3 class="mb-3"><i class="uil uil-history"></i> My Loan Requests</h3>
+            <div id="myLoans"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase config (same as other pages)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser = null;
+    let currentUserData = null;
+    let loanLimit = 100; // Default loan limit
+
+    // Sidebar toggle for mobile
+    const sidebar = document.getElementById('sidebarNav');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('show');
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth < 992 && sidebar.classList.contains('show')) {
+        if (!sidebar.contains(e.target) && !sidebarToggle?.contains(e.target)) {
+          sidebar.classList.remove('show');
+        }
+      }
+    });
+
+    // Helper: Render loan status badge
+    function loanStatusBadge(status) {
+      if (!status) return '';
+      const s = status.toLowerCase();
+      if (s === 'processing') return '<span class="badge bg-warning">Processing</span>';
+      if (s === 'approved') return '<span class="badge bg-success">Approved</span>';
+      if (s === 'rejected') return '<span class="badge bg-danger">Rejected</span>';
+      return `<span class="badge bg-secondary">${status}</span>`;
+    }
+
+    // Helper: Render user's loans
+    function renderLoans(loans, uid) {
+      if (!loans || !loans.length) return '<div class="alert alert-info">No loan requests yet.</div>';
+      
+      let html = `
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Loan ID</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+      
+      loans.filter(l => l.userId === uid).reverse().forEach(loan => {
+        html += `
+          <tr>
+            <td>${loan.date ? new Date(loan.date).toLocaleString() : ''}</td>
+            <td>$${loan.amount}</td>
+            <td>${loan.purpose || ''}</td>
+            <td>${loanStatusBadge(loan.status)}</td>
+            <td>${loan.loanId}</td>
+          </tr>
+        `;
+      });
+      
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+      
+      return html;
+    }
+
+    // Helper: Generate unique loanId
+    function generateLoanId() {
+      return Math.floor(10000000000 + Math.random() * 90000000000).toString();
+    }
+
+    // Load user and loan info
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "signin.html";
+        return;
+      }
+      currentUser = user;
+      // Get user data
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      currentUserData = userDoc.data() || {};
+      // Set loan limit if not set
+      if (!currentUserData.loanLimit) {
+        await db.collection('users').doc(user.uid).set({ loanLimit: loanLimit }, { merge: true });
+      } else {
+        loanLimit = currentUserData.loanLimit;
+      }
+      document.getElementById('loan-info').innerHTML = `<div class="alert alert-info">Your loan limit is <b>$${loanLimit}</b>. You can only request up to this amount.</div>`;
+      loadMyLoans();
+    });
+
+    // Load user's loans
+    async function loadMyLoans() {
+      const loansDoc = await db.collection('loans').doc('Q26XLw0nrAqInXYWrVki').get();
+      const loansArr = (loansDoc.data() && loansDoc.data().loans) || [];
+      document.getElementById('myLoans').innerHTML = renderLoans(loansArr, currentUser.uid);
+    }
+
+    // Handle loan application
+    document.getElementById('loanForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const amount = parseFloat(document.getElementById('loanAmount').value);
+      const purpose = document.getElementById('loanPurpose').value.trim();
+      const alertDiv = document.getElementById('loanAlert');
+      alertDiv.innerHTML = '';
+      
+      if (isNaN(amount)) {
+        alertDiv.innerHTML = '<div class="alert alert-danger">Please enter a valid amount.</div>';
+        return;
+      }
+      
+      if (amount < 1) {
+        alertDiv.innerHTML = '<div class="alert alert-danger">Loan amount must be at least $1.</div>';
+        return;
+      }
+      
+      if (amount > loanLimit) {
+        alertDiv.innerHTML = `<div class="alert alert-danger">You cannot request more than your loan limit ($${loanLimit}).</div>`;
+        return;
+      }
+      
+      const loanId = generateLoanId();
+      const loanObj = {
+        loanId,
+        userId: currentUser.uid,
+        amount,
+        purpose,
+        status: 'processing',
+        date: new Date().toISOString()
+      };
+      
+      try {
+        // Save to loans array in central doc
+        const loansDocRef = db.collection('loans').doc('Q26XLw0nrAqInXYWrVki');
+        await loansDocRef.set({
+          loans: firebase.firestore.FieldValue.arrayUnion(loanObj)
+        }, { merge: true });
+
+        // Save loanId in user's transactionHistory
+        await db.collection('users').doc(currentUser.uid).set({
+          transactionHistory: firebase.firestore.FieldValue.arrayUnion(loanId)
+        }, { merge: true });
+
+        // Save transaction in transfers/transactions
+        const transfersDocRef = db.collection('transfers').doc('transactions');
+        const transactionObj = {
+          id: loanId,
+          type: 'loan',
+          status: 'processing',
+          amount,
+          description: `Loan request: $${amount} for "${purpose}"`,
+          date: loanObj.date,
+          userId: currentUser.uid,
+          loanId
+        };
+        await transfersDocRef.set({
+          transactions: firebase.firestore.FieldValue.arrayUnion(transactionObj)
+        }, { merge: true });
+
+        alertDiv.innerHTML = '<div class="alert alert-success">Loan request submitted successfully!</div>';
+        document.getElementById('loanForm').reset();
+        loadMyLoans();
+      } catch (err) {
+        console.error('Loan submission error:', err);
+        alertDiv.innerHTML = '<div class="alert alert-danger">Failed to submit loan request. Please try again.</div>';
+      }
+    };
+  </script>
+</body>
+</html>

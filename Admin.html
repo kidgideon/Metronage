@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - Geex Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@iconscout/unicons@4.0.8/css/line.min.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon.svg">
+  <style>
+    body { font-family: 'Jost', sans-serif; background: #f4f6fb; color: #343a40; }
+    .main-content { padding: 2rem 1rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .dashboard-card { background: #fff; border-radius: 1.25rem; box-shadow: 0 2px 24px 0 rgba(80,80,120,0.08); padding: 2rem; margin-bottom: 2rem; }
+    .table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; }
+    .table th, .table td { padding: 0.75rem 1rem; border-top: 1px solid #e9ecef; }
+    .table thead th { background: #f8f9fa; }
+    .table-hover tbody tr:hover { background: #f4f6fb; }
+    .badge { display: inline-block; padding: 0.35em 0.7em; font-size: 0.9em; border-radius: 0.5em; }
+    .badge-processing { background: #fff3cd; color: #856404; }
+    .badge-approved { background: #d4edda; color: #155724; }
+    .badge-completed { background: #d4edda; color: #155724; }
+    .badge-rejected { background: #f8d7da; color: #721c24; }
+    .badge-other { background: #e2e3e5; color: #383d41; }
+    .text-danger { color: #dc3545; }
+    .text-success { color: #28a745; }
+    .text-muted { color: #6c757d; }
+    .fw-bold { font-weight: 600; }
+    .mb-3 { margin-bottom: 1rem; }
+    .mb-4 { margin-bottom: 1.5rem; }
+    .alert { padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+    .alert-info { background: #d1ecf1; color: #0c5460; }
+    .alert-danger { background: #f8d7da; color: #721c24; }
+    .alert-success { background: #d4edda; color: #155724; }
+    .btn { display: inline-block; font-weight: 500; border: none; border-radius: .5rem; padding: .5rem 1.2rem; font-size: 1rem; cursor: pointer; background: linear-gradient(90deg, #6a82fb, #fc5c7d); color: #fff; transition: background .2s; }
+    .btn:disabled { opacity: .7; cursor: not-allowed; }
+    .btn-approve { background: #28a745; color: #fff; }
+    .btn-reject { background: #dc3545; color: #fff; }
+    .btn-view { background: #6a82fb; color: #fff; }
+    .debt-badge { background: #ffeeba; color: #856404; border-radius: 0.5em; padding: 0.2em 0.7em; }
+    @media (max-width: 991.98px) {
+      .main-content { margin-left: 0; padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="dashboard-card mb-4">
+        <h2 class="mb-3"><i class="uil uil-users-alt"></i> All Users</h2>
+        <div id="users-table"></div>
+      </div>
+      <div class="dashboard-card mb-4">
+        <h2 class="mb-3"><i class="uil uil-file-check-alt"></i> Cheque Requests</h2>
+        <div id="cheque-requests-table"></div>
+      </div>
+      <div class="dashboard-card mb-4">
+        <h2 class="mb-3"><i class="uil uil-money-withdraw"></i> Loan Requests</h2>
+        <div id="loan-requests-table"></div>
+      </div>
+      <div class="dashboard-card mb-4">
+        <h2 class="mb-3"><i class="uil uil-exchange"></i> Transfer Requests</h2>
+        <div id="transfer-requests-table"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase config (same as other pages)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Helper: badge for status
+    function statusBadge(status) {
+      if (!status) return '';
+      const s = status.toLowerCase();
+      if (s === 'processing') return '<span class="badge badge-processing">Processing</span>';
+      if (s === 'approved') return '<span class="badge badge-approved">Approved</span>';
+      if (s === 'completed') return '<span class="badge badge-completed">Completed</span>';
+      if (s === 'rejected') return '<span class="badge badge-rejected">Rejected</span>';
+      return `<span class="badge badge-other">${status}</span>`;
+    }
+
+    // USERS TABLE
+    async function loadUsers() {
+      const usersSnap = await db.collection('users').get();
+      let html = `
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Account No</th>
+              <th>Balance</th>
+              <th>Loan Limit</th>
+              <th>Debt</th>
+              <th>User ID</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      usersSnap.forEach(doc => {
+        const d = doc.data();
+        html += `
+          <tr>
+            <td>${(d.firstName || '') + ' ' + (d.lastName || '')}</td>
+            <td>${d.email || ''}</td>
+            <td>${d.accountNumber || ''}</td>
+            <td>$${d.balance ?? 0}</td>
+            <td>$${d.loanLimit ?? 100}</td>
+            <td>${d.debt ? `<span class="debt-badge">$${d.debt.amount} (${d.debt.status})</span>` : '<span class="text-muted">None</span>'}</td>
+            <td style="font-size:0.9em;">${doc.id}</td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table>';
+      document.getElementById('users-table').innerHTML = html;
+    }
+
+    // CHEQUE REQUESTS TABLE
+    async function loadChequeRequests() {
+      const chequesDoc = await db.collection('cheques').doc('cheques').get();
+      const chequesArr = (chequesDoc.data() && chequesDoc.data().cheques) || [];
+      let html = `
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Cheque No</th>
+              <th>Payee</th>
+              <th>Payer</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      for (const cheque of chequesArr.slice().reverse()) {
+        html += `
+          <tr>
+            <td>${cheque.chequeNumber}</td>
+            <td>${cheque.payeeName}</td>
+            <td>${cheque.payerAccountNumber}</td>
+            <td>$${cheque.amount} ${cheque.currency}</td>
+            <td>${statusBadge(cheque.status)}</td>
+            <td>${cheque.issueDate ? new Date(cheque.issueDate).toLocaleString() : ''}</td>
+            <td>
+              ${cheque.status === 'processing' ? `<button class="btn btn-approve" onclick="approveCheque('${cheque.chequeId}')">Approve</button>` : ''}
+            </td>
+          </tr>
+        `;
+      }
+      html += '</tbody></table>';
+      document.getElementById('cheque-requests-table').innerHTML = html;
+    }
+
+    // LOAN REQUESTS TABLE
+    async function loadLoanRequests() {
+      const loansDoc = await db.collection('loans').doc('Q26XLw0nrAqInXYWrVki').get();
+      const loansArr = (loansDoc.data() && loansDoc.data().loans) || [];
+      let html = `
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Amount</th>
+              <th>Purpose</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Loan ID</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      // After fetching all users, build a map:
+      const usersSnap = await db.collection('users').get();
+      const userMap = {};
+      usersSnap.forEach(doc => {
+        const d = doc.data();
+        userMap[doc.id] = (d.firstName || '') + ' ' + (d.lastName || '');
+      });
+
+      for (const loan of loansArr.slice().reverse()) {
+        html += `
+          <tr>
+            <td>${userMap[loan.userId] || loan.userId}</td>
+            <td>$${loan.amount}</td>
+            <td>${loan.purpose || ''}</td>
+            <td>${statusBadge(loan.status)}</td>
+            <td>${loan.date ? new Date(loan.date).toLocaleString() : ''}</td>
+            <td>${loan.loanId}</td>
+            <td>
+              ${loan.status === 'processing' ? `<button class="btn btn-approve" onclick="approveLoan('${loan.loanId}')">Approve</button>` : ''}
+            </td>
+          </tr>
+        `;
+      }
+      html += '</tbody></table>';
+      document.getElementById('loan-requests-table').innerHTML = html;
+    }
+
+    // TRANSFER REQUESTS TABLE
+    async function loadTransferRequests() {
+      const transfersDoc = await db.collection('transfers').doc('transactions').get();
+      const txArr = (transfersDoc.data() && transfersDoc.data().transactions) || [];
+      // Fetch all users and build a map for names
+      const usersSnap = await db.collection('users').get();
+      const userMap = {};
+      usersSnap.forEach(doc => {
+        const d = doc.data();
+        userMap[doc.id] = (d.firstName || '') + ' ' + (d.lastName || '');
+      });
+
+      let html = `
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Sender</th>
+              <th>Receiver</th>
+              <th>Amount</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      for (const tx of txArr.slice().reverse()) {
+        if (tx.type !== 'send' || tx.status !== 'processing') continue;
+        html += `
+          <tr>
+            <td>${tx.date ? new Date(tx.date).toLocaleString() : ''}</td>
+            <td>${userMap[tx.senderId] || tx.senderId || ''}</td>
+            <td>${userMap[tx.receiverId] || tx.receiverId || 'Other Bank'}</td>
+            <td>$${tx.amount || ''}</td>
+            <td>${tx.description || ''}</td>
+            <td>${statusBadge(tx.status)}</td>
+            <td>
+              <button class="btn btn-approve" onclick="approveTransfer('${tx.id}')">Approve</button>
+            </td>
+          </tr>
+        `;
+      }
+      html += '</tbody></table>';
+      document.getElementById('transfer-requests-table').innerHTML = html;
+    }
+
+    // APPROVE CHEQUE
+    async function approveCheque(chequeId) {
+      // 1. Update cheque status to 'approved'
+      const chequesDocRef = db.collection('cheques').doc('cheques');
+      const chequesDoc = await chequesDocRef.get();
+      let chequesArr = (chequesDoc.data() && chequesDoc.data().cheques) || [];
+      chequesArr = chequesArr.map(c =>
+        c.chequeId === chequeId ? { ...c, status: 'approved' } : c
+      );
+      await chequesDocRef.update({ cheques: chequesArr });
+
+      // 2. Update transaction status to 'approved'
+      const transfersDocRef = db.collection('transfers').doc('transactions');
+      const transfersDoc = await transfersDocRef.get();
+      let txArr = (transfersDoc.data() && transfersDoc.data().transactions) || [];
+      txArr = txArr.map(tx =>
+        tx.chequeId === chequeId ? { ...tx, status: 'approved' } : tx
+      );
+      await transfersDocRef.update({ transactions: txArr });
+
+      loadChequeRequests();
+      alert('Cheque approved! Payee can now claim the cheque.');
+    }
+
+    // APPROVE LOAN
+    async function approveLoan(loanId) {
+      // 1. Update loan status to 'approved'
+      const loansDocRef = db.collection('loans').doc('Q26XLw0nrAqInXYWrVki');
+      const loansDoc = await loansDocRef.get();
+      let loansArr = (loansDoc.data() && loansDoc.data().loans) || [];
+      let loanObj = loansArr.find(l => l.loanId === loanId);
+      loansArr = loansArr.map(l =>
+        l.loanId === loanId ? { ...l, status: 'approved' } : l
+      );
+      await loansDocRef.update({ loans: loansArr });
+
+      // 2. Credit user's balance and create debt object
+      if (loanObj) {
+        const userRef = db.collection('users').doc(loanObj.userId);
+        await userRef.update({
+          balance: firebase.firestore.FieldValue.increment(loanObj.amount),
+          debt: {
+            amount: loanObj.amount,
+            status: 'unpaid',
+            loanId: loanObj.loanId,
+            date: new Date().toISOString()
+          }
+        });
+      }
+
+      // 3. Update transaction status to 'approved'
+      const transfersDocRef = db.collection('transfers').doc('transactions');
+      const transfersDoc = await transfersDocRef.get();
+      let txArr = (transfersDoc.data() && transfersDoc.data().transactions) || [];
+      txArr = txArr.map(tx =>
+        tx.loanId === loanId ? { ...tx, status: 'approved' } : tx
+      );
+      await transfersDocRef.update({ transactions: txArr });
+
+      loadLoanRequests();
+      loadUsers();
+      alert('Loan approved and credited. Debt object created for user.');
+    }
+
+    // APPROVE TRANSFER
+    async function approveTransfer(txId) {
+      // 1. Update transaction status to 'approved'
+      const transfersDocRef = db.collection('transfers').doc('transactions');
+      const transfersDoc = await transfersDocRef.get();
+      let txArr = (transfersDoc.data() && transfersDoc.data().transactions) || [];
+      let txObj = txArr.find(tx => tx.id === txId);
+      txArr = txArr.map(tx =>
+        tx.id === txId ? { ...tx, status: 'approved' } : tx
+      );
+      await transfersDocRef.update({ transactions: txArr });
+
+      // 2. Credit receiver's balance if it's a Geex transfer
+      if (txObj && txObj.receiverId) {
+        await db.collection('users').doc(txObj.receiverId).update({
+          balance: firebase.firestore.FieldValue.increment(txObj.amount)
+        });
+      }
+
+      loadTransferRequests();
+      alert('Transfer approved and funds sent to the receiver.');
+    }
+
+    // Initial load
+    loadUsers();
+    loadChequeRequests();
+    loadLoanRequests();
+    loadTransferRequests();
+  </script>
+</body>
+</html>

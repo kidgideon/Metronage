@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account & KYC - Geex Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@iconscout/unicons@4.0.8/css/line.min.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon.svg">
+  <link rel="stylesheet" href="./styles/index.css">
+  <style>
+    /* Base Styles */
+    :root {
+      --primary: #6a82fb;
+      --primary-hover: #5a72eb;
+      --gradient-start: #6a82fb;
+      --gradient-end: #fc5c7d;
+      --success: #28a745;
+      --danger: #dc3545;
+      --secondary: #6c757d;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --white: #fff;
+      --gray-100: #f8f9fa;
+      --gray-200: #e9ecef;
+      --gray-300: #dee2e6;
+      --gray-400: #ced4da;
+      --gray-500: #adb5bd;
+      --gray-600: #6c757d;
+      --gray-700: #495057;
+      --gray-800: #343a40;
+      --gray-900: #212529;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+      --shadow-none: 0 0 #0000;
+      --border-radius-sm: 0.2rem;
+      --border-radius: 0.25rem;
+      --border-radius-md: 0.3rem;
+      --border-radius-lg: 0.5rem;
+      --border-radius-xl: 1rem;
+      --border-radius-2xl: 1.25rem;
+      --border-radius-full: 9999px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Jost', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      color: var(--gray-800);
+      background-color: #f4f6fb;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    input, textarea, select {
+      font-family: inherit;
+    }
+
+    /* Utility Classes */
+    .d-none {
+      display: none !important;
+    }
+
+    .d-flex {
+      display: flex !important;
+    }
+
+    .flex-column {
+      flex-direction: column !important;
+    }
+
+    .flex-row {
+      flex-direction: row !important;
+    }
+
+    .align-items-center {
+      align-items: center !important;
+    }
+
+    .justify-content-between {
+      justify-content: space-between !important;
+    }
+
+    .justify-content-center {
+      justify-content: center !important;
+    }
+
+    .gap-3 {
+      gap: 1rem !important;
+    }
+
+    .w-100 {
+      width: 100% !important;
+    }
+
+    .fw-bold {
+      font-weight: 600 !important;
+    }
+
+    .mb-0 {
+      margin-bottom: 0 !important;
+    }
+
+    .mb-1 {
+      margin-bottom: 0.25rem !important;
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem !important;
+    }
+
+    .mb-3 {
+      margin-bottom: 1rem !important;
+    }
+
+    .mb-4 {
+      margin-bottom: 1.5rem !important;
+    }
+
+    .mt-1 {
+      margin-top: 0.25rem !important;
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem !important;
+    }
+
+    .mt-3 {
+      margin-top: 1rem !important;
+    }
+
+    .mt-4 {
+      margin-top: 1.5rem !important;
+    }
+
+    .py-4 {
+      padding-top: 1.5rem !important;
+      padding-bottom: 1.5rem !important;
+    }
+
+    .px-3 {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+
+    .text-white {
+      color: var(--white) !important;
+    }
+
+    .text-muted {
+      color: var(--gray-600) !important;
+    }
+
+    .text-danger {
+      color: var(--danger) !important;
+    }
+
+    .text-success {
+      color: var(--success) !important;
+    }
+
+    .bg-white {
+      background-color: var(--white) !important;
+    }
+
+    .bg-primary {
+      background-color: var(--primary) !important;
+    }
+
+    .bg-success {
+      background-color: var(--success) !important;
+    }
+
+    .border-0 {
+      border: none !important;
+    }
+
+    .border-bottom {
+      border-bottom: 1px solid var(--gray-200) !important;
+    }
+
+    .shadow-sm {
+      box-shadow: var(--shadow-sm) !important;
+    }
+
+    .shadow {
+      box-shadow: var(--shadow) !important;
+    }
+
+    .rounded {
+      border-radius: var(--border-radius) !important;
+    }
+
+    .rounded-lg {
+      border-radius: var(--border-radius-lg) !important;
+    }
+
+    .rounded-xl {
+      border-radius: var(--border-radius-xl) !important;
+    }
+
+    .rounded-2xl {
+      border-radius: var(--border-radius-2xl) !important;
+    }
+
+    .col-12 {
+      width: 100%;
+    }
+
+    /* Spinner */
+    .spinner-border {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      vertical-align: -0.125em;
+      border: 0.15em solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: spinner-border 0.75s linear infinite;
+    }
+
+    .spinner-border-sm {
+      width: 0.75rem;
+      height: 0.75rem;
+      border-width: 0.1em;
+    }
+
+    @keyframes spinner-border {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      text-align: center;
+      vertical-align: middle;
+      user-select: none;
+      background-color: transparent;
+      border: 1px solid transparent;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      border-radius: var(--border-radius-lg);
+      transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, 
+                  border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      color: var(--white);
+      background: black;
+      border: none;
+    }
+
+    .btn-lg {
+      padding: 0.75rem 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    /* Forms */
+    .form-control, .form-select {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--gray-700);
+      background-color: var(--white);
+      background-clip: padding-box;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--border-radius);
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus, .form-select:focus {
+      color: var(--gray-700);
+      background-color: var(--white);
+      border-color: var(--primary);
+      outline: 0;
+      box-shadow: 0 0 0 0.2rem rgba(106, 130, 251, 0.15);
+    }
+
+    .form-control::placeholder {
+      color: var(--gray-500);
+      opacity: 1;
+    }
+
+    .form-control:disabled {
+      background-color: var(--gray-200);
+      opacity: 1;
+    }
+
+    .form-control[readonly] {
+      background-color: var(--gray-200);
+    }
+
+    .form-label {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    /* Alerts */
+    .alert {
+      position: relative;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid transparent;
+      border-radius: var(--border-radius);
+    }
+
+    .alert-success {
+      color: #155724;
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+    }
+
+    .alert-danger {
+      color: #721c24;
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+    }
+
+    /* Cards */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      word-wrap: break-word;
+      background-color: var(--white);
+      background-clip: border-box;
+      border-radius: var(--border-radius-2xl) !important;
+      box-shadow: 0 2px 24px 0 rgba(80, 80, 120, 0.08) !important;
+      border: none !important;
+    }
+
+    .card-body {
+      flex: 1 1 auto;
+      padding: 1.5rem;
+    }
+
+    .dashboard-card {
+      box-shadow: 0 2px 24px 0 rgba(80, 80, 120, 0.08);
+      background: rgb(54, 54, 54);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .dashboard-card p, .dashboard-card div {
+      text-align: center;
+    }
+
+    .profile-img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--white);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Form Section */
+    .form-section {
+      border-radius: var(--border-radius-2xl);
+      background: rgb(49, 49, 49);
+      padding: 20px;
+      margin-bottom: 2rem;
+      width: 700px;
+    }
+
+    /* Upload Label */
+    .upload-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .upload-label i {
+      font-size: 1.3rem;
+    }
+
+  
+
+    @media (max-width: 767.98px) {
+        body {
+          padding-left: 0px;
+        }
+
+        .form-section {
+          width: 100%;
+        }
+      }
+
+  </style>
+</head>
+<body>
+   <div class="container">
+     <!-- Sidebar -->
+    <div class="geex-sidebar" id="sidebarNav">
+      <div class="geex-sidebar__wrapper">
+        <div class="geex-sidebar__header">
+          <a class='geex-sidebar__logo' href='index.html'>
+            <img src="assets/img/logo-dark.svg" alt="logo" />
+          </a>
+        </div>
+        <nav class="geex-sidebar__menu-wrapper">
+          <ul class="geex-sidebar__menu">
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="index.html">
+                <i class="uil uil-money-bill"></i>
+                <p>Dashboard</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="cheque.html">
+                <i class="uil uil-money-bill"></i>
+                <p>Cheque</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="send-receive.html">
+                <i class="uil uil-exchange"></i>
+                <p>Send/Receive</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link active" href="account.html">
+                <i class="uil uil-user"></i>
+                <p>Account</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="settings.html">
+                <i class="uil uil-cog"></i>
+                <p>Settings</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="transactions.html">
+                <i class="uil uil-list-ul"></i>
+                <p>Transactions</p>
+              </a>
+            </li>
+            <li class="geex-sidebar__menu__item">
+              <a class="geex-sidebar__menu__link" href="loan.html">
+                <i class="uil uil-money-withdraw"></i> 
+                <p>Loan</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <div class="scrollable-area">
+        <!-- Mobile Top Navbar (visible on mobile only) -->
+        <nav class="mobile-navbar d-lg-none">
+          <div class="mobile-navbar-inner">
+            <!-- Hamburger toggle with ID for JavaScript -->
+            <svg id="sidebarToggle" class="hamburger-toggle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </div>
+        </nav>
+        <div class="row g-4 mb-4 pt-4 justify-content-center">
+          <!-- Profile Card -->
+          <div class="col-12 col-lg-4">
+            <div class="dashboard-card p-4 text-center h-100 w-100 mb-4">
+              <img src="assets/img/avatar/empty-profile.webp" class="profile-img mb-3" id="user-avatar" alt="User">
+              <h4 id="user-name">Loading...</h4>
+              <p class="mb-1 text-muted" id="user-email"></p>
+              <div class="mt-3">
+                <div><strong>Account Number:</strong> <span id="user-account-number"></span></div>
+                <div><strong>Bank:</strong> Geex Bank</div>
+              </div>
+            </div>
+          </div>
+      
+          <!-- KYC Form Card -->
+          <div class="col-12 col-lg-8">
+            <form class="form-section" id="kycForm" enctype="multipart/form-data" autocomplete="off">
+              <h5 class="mb-3">Update & Verify Your KYC Information</h5>
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="fullName">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="bvn">BVN</label>
+                  <input type="text" class="form-control" id="bvn" maxlength="11" pattern="\d{11}" required>
+                </div>
+                <div class="col-md-12">
+                  <label class="form-label" for="address">Residential Address</label>
+                  <input type="text" class="form-control" id="address" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="dob">Date of Birth</label>
+                  <input type="date" class="form-control" id="dob" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="phone">Phone Number</label>
+                  <input type="tel" class="form-control" id="phone" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="idType">ID Type</label>
+                  <select class="form-select" id="idType" required>
+                    <option value="">Select</option>
+                    <option value="national_id">National ID</option>
+                    <option value="drivers_license">Driver's License</option>
+                    <option value="passport">International Passport</option>
+                    <option value="voters_card">Voter's Card</option>
+                  </select>
+                </div>
+      
+                <div class="col-md-6">
+                  <label class="form-label" for="idNumber">ID Number</label>
+                  <input type="text" class="form-control" id="idNumber" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label upload-label" for="idFront">
+                    <i class="uil uil-upload"></i> Upload ID (Front)
+                  </label>
+                  <input type="file" class="form-control" id="idFront" accept="image/*,application/pdf" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label upload-label" for="idBack">
+                    <i class="uil uil-upload"></i> Upload ID (Back)
+                  </label>
+                  <input type="file" class="form-control" id="idBack" accept="image/*,application/pdf" required>
+                </div>
+              </div>
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-lg" id="saveKycBtn">
+                  <span id="saveKycBtnText">Save Changes</span>
+                  <span id="saveKycBtnSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                </button>
+              </div>
+              <div id="kycAlert" class="mt-3"></div>
+            </form>
+          </div>
+        </div>
+    </div>
+   </div>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+
+  <script>
+ // Sidebar toggle for mobile
+ const sidebar = document.getElementById('sidebarNav');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('show');
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth < 992 && sidebar.classList.contains('show')) {
+        if (!sidebar.contains(e.target) && !sidebarToggle?.contains(e.target)) {
+          sidebar.classList.remove('show');
+        }
+      }
+    });
+
+    // Firebase config (reuse from other pages)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUserData = null;
+
+
+    // Load user info for profile card and prefill KYC form
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "signin.html";
+        return;
+      }
+      try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const data = userDoc.data() || {};
+        currentUserData = data;
+        // Profile card
+        document.getElementById('user-name').textContent = data.accountName || (data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : user.email);
+        document.getElementById('user-email').textContent = data.email || user.email;
+        document.getElementById('user-account-number').textContent = data.accountNumber || 'N/A';
+        // Prefill KYC form
+        document.getElementById('fullName').value = data.accountName || data.fullName || '';
+        document.getElementById('bvn').value = data.bvn || '';
+        document.getElementById('address').value = data.address || '';
+        document.getElementById('dob').value = data.dob || '';
+        document.getElementById('phone').value = data.phone || '';
+        document.getElementById('idType').value = data.idType || '';
+        document.getElementById('idNumber').value = data.idNumber || '';
+      } catch (err) {
+        document.getElementById('user-name').textContent = "Error loading user";
+      }
+    });
+
+    // KYC Form Submission
+    document.getElementById('kycForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveKycBtn');
+      const btnText = document.getElementById('saveKycBtnText');
+      const btnSpinner = document.getElementById('saveKycBtnSpinner');
+      const alertDiv = document.getElementById('kycAlert');
+      btn.disabled = true; 
+      btnSpinner.classList.remove('d-none'); 
+      btnText.textContent = "Saving..."; 
+      alertDiv.innerHTML = "";
+
+      // Gather form data
+      const fullName = document.getElementById('fullName').value.trim();
+      const bvn = document.getElementById('bvn').value.trim();
+      const address = document.getElementById('address').value.trim();
+      const dob = document.getElementById('dob').value;
+      const phone = document.getElementById('phone').value.trim();
+      const idType = document.getElementById('idType').value;
+      const idNumber = document.getElementById('idNumber').value.trim();
+      const idFront = document.getElementById('idFront').files[0];
+      const idBack = document.getElementById('idBack').files[0];
+
+      // Simple validation
+      if (!fullName || !bvn || !address || !dob || !phone || !idType || !idNumber || !idFront || !idBack) {
+        alertDiv.innerHTML = `<div class="alert alert-danger">Please fill all fields and upload both ID images.</div>`;
+        btn.disabled = false; 
+        btnSpinner.classList.add('d-none'); 
+        btnText.textContent = "Save Changes";
+        return;
+      }
+
+      try {
+        // Save KYC info to Firestore (simulate upload, real app should upload files to Firebase Storage)
+        const user = auth.currentUser;
+        if (!user) throw new Error("Not authenticated");
+
+        // Simulate file upload by storing file names (replace with real upload in production)
+        const kycData = {
+          fullName,
+          accountName: fullName,
+          bvn,
+          address,
+          dob,
+          phone,
+          idType,
+          idNumber,
+          idFrontName: idFront.name,
+          idBackName: idBack.name,
+          kycStatus: "pending"
+        };
+        await db.collection('users').doc(user.uid).set(kycData, { merge: true });
+
+        alertDiv.innerHTML = `<div class="alert alert-success">KYC information updated! Verification pending.</div>`;
+      } catch (err) {
+        alertDiv.innerHTML = `<div class="alert alert-danger">Failed to save KYC info. Try again.</div>`;
+      }
+      btn.disabled = false; 
+      btnSpinner.classList.add('d-none'); 
+      btnText.textContent = "Save Changes";
+    });
+  </script>
+</body>
+</html>

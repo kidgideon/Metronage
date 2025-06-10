@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bank Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@iconscout/unicons@4.0.8/css/line.min.css">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon.svg">
+  <link rel="stylesheet" href="./styles/index.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+   <div class="container">
+ <!-- Sidebar -->
+  <div class="geex-sidebar" id="sidebarNav">
+    <div class="geex-sidebar__wrapper">
+      <div class="geex-sidebar__header">
+        <a class='geex-sidebar__logo' href='index.html'>
+          <img src="assets/img/logo-dark.svg" alt="logo" />
+        </a>
+      </div>
+      <nav class="geex-sidebar__menu-wrapper">
+        <ul class="geex-sidebar__menu">
+          <li class="geex-sidebar__menu__item">
+            <a class="geex-sidebar__menu__link active" href="index.html">
+              <i class="uil uil-money-bill"></i>
+              <p>  Dashboard</p>
+            </a>
+          </li>
+          <li class="geex-sidebar__menu__item">
+            <a class="geex-sidebar__menu__link" href="cheque.html">
+              <i class="uil uil-money-bill"></i>
+              <p> Cheque</p>
+            </a>
+          </li>
+          <li class="geex-sidebar__menu__item">
+            <a class="geex-sidebar__menu__link" href="send-receive.html">
+              <i class="uil uil-exchange"></i>
+              <p>Send/Receive</p>
+            </a>
+          </li>
+          <li class="geex-sidebar__menu__item">
+            <a class="geex-sidebar__menu__link" href="account.html">
+              <i class="uil uil-user"></i>
+              <p>Account</p>
+            </a>
+          </li>
+          <li class="geex-sidebar__menu__item">
+            <a class="geex-sidebar__menu__link" href="settings.html">
+              <i class="uil uil-cog"></i>
+              <p>Settings</p>
+            </a>
+          </li>
+          <li class="geex-sidebar__menu__item">
+            <a class="geex-sidebar__menu__link" href="transactions.html">
+              <i class="uil uil-list-ul"></i>
+              <p>Transactions</p>
+            </a>
+          </li>
+            <li class="geex-sidebar__menu__item"><a class="geex-sidebar__menu__link" href="loan.html"><i class="uil uil-money-withdraw"></i> 
+              <p>Loan</p>
+            </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <div class="scrollable-area">
+<!-- Mobile Top Navbar (visible on mobile only) -->
+<nav class="mobile-navbar d-lg-none">
+  <div class="mobile-navbar-inner">
+    <!-- Hamburger toggle with ID for JavaScript -->
+      <svg id="sidebarToggle" class="hamburger-toggle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+  </div>
+</nav>
+
+
+  <!-- Main Content -->
+  <main class="main-content container py-4">
+    <div class="row g-4 mb-4 pt-4">
+      <div class="toplayer-dashboard">
+  <!-- Profile Card -->
+    <div class="dashboard-card-profile p-4 text-center h-100 w-100">
+      <img src="assets/img/avatar/empty-profile.webp" class="profile-img mb-3" id="user-avatar" alt="User">
+      <h4 id="user-name">Loading...</h4>
+      <p class="mb-1 text-muted" id="user-email"></p>
+      <div class="mt-3">
+        <div class="centered-text"><strong>Account Number:</strong> <span id="user-account-number"></span></div>
+        <div  class="centered-text"><strong>Bank:</strong> Geex Bank</div>
+      </div>
+    </div>
+
+    <!-- Account Overview - Balance -->
+<div class="col-12 col-lg-6">
+  <div class="overview-card-balance d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+  
+      <!-- Balance Section -->
+      <div class="balance-section">
+        <div class="mb-2" style="font-size: 1.1rem; opacity: 0.85;">Total Balance</div>
+        <div style="font-size: 2.5rem; font-weight: 700;" id="user-balance">
+          <span class="spinner-border spinner-border-sm"></span>
+        </div>
+        <div class="d-flex gap-4 mt-3">
+          <div>
+            <div class="small">Income</div>
+            <div class="text-success fw-bold" id="income-amount">$0</div>
+          </div>
+          <div>
+            <div class="small">Expense</div>
+            <div class="text-danger fw-bold" id="expense-amount">$0</div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="quick-action-btn" onclick="window.location='send-receive.html'" title="Send Money">
+          <i class="uil uil-arrow-up-right"></i>
+        </button>
+        <span class="small">Send</span>
+        <button class="quick-action-btn" onclick="window.location='send-receive.html'" title="Receive Money">
+          <i class="uil uil-arrow-down-left"></i>
+        </button>
+        <span class="small">Receive</span>
+      </div>
+
+  </div>
+</div>
+  </div>
+ 
+      </div>
+
+      <!-- Chart and Transactions -->
+      <div class="col-12 col-lg-6">
+        <div class="dashboard-card p-4 h-100 w-100">
+          <h5 class="mb-3">Income vs Expense</h5>
+          <div class="chart-container">
+            <canvas id="incomeExpenseChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="dashboard-card p-4 h-100 w-100">
+          <h5>Recent Transactions</h5>
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-table">
+                <tr><td colspan="5" class="text-center"><span class="spinner-border spinner-border-sm"></span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Transaction Detail Modal -->
+  <div class="modal" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+  </div >
+   </div>
+  </div>
+
+ 
+
+  <!-- JavaScript Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Modal functionality
+    class Modal {
+      constructor(element) {
+        this.element = element;
+        this.isShown = false;
+        this.init();
+      }
+
+      init() {
+        // Close modal when clicking outside or on close button
+        this.element.addEventListener('click', (e) => {
+          if (e.target === this.element || e.target.classList.contains('btn-close') || e.target.getAttribute('data-dismiss') === 'modal') {
+            this.hide();
+          }
+        });
+      }
+
+      show() {
+        this.element.style.display = 'block';
+        this.element.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        this.isShown = true;
+      }
+
+      hide() {
+        this.element.style.display = 'none';
+        this.element.classList.remove('show');
+        document.body.style.overflow = '';
+        this.isShown = false;
+      }
+    }
+
+    // Initialize modal
+    const transactionModal = new Modal(document.getElementById('transactionModal'));
+
+    // Firebase config (same as send-receive.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUserData = null;
+    let chart = null;
+
+    // Sidebar toggle for mobile
+    const sidebar = document.getElementById('sidebarNav');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarClose = document.getElementById('sidebarClose');
+    
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.add('show');
+        sidebarClose.classList.remove('d-none');
+      });
+    }
+    
+    if (sidebarClose) {
+      sidebarClose.addEventListener('click', function() {
+        sidebar.classList.remove('show');
+        this.classList.add('d-none');
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth < 992 && sidebar.classList.contains('show')) {
+        if (!sidebar.contains(e.target) && !sidebarToggle?.contains(e.target)) {
+          sidebar.classList.remove('show');
+          sidebarClose.classList.add('d-none');
+        }
+      }
+    });
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = "signin.html";
+        return;
+      }
+      try {
+        // Fetch user data
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const data = userDoc.data() || {};
+        currentUserData = data;
+
+        // Display user info
+        document.getElementById('user-name').textContent = data.accountName || (data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : user.email);
+        document.getElementById('user-email').textContent = data.email || user.email;
+        document.getElementById('user-account-number').textContent = data.accountNumber || 'N/A';
+        document.getElementById('user-balance').textContent = `$ ${data.balance ?? 0}`;
+
+        // Fetch transactions
+        let income = 0, expense = 0;
+        let chartLabels = [], chartIncome = [], chartExpense = [];
+        if (Array.isArray(data.transactionHistory) && data.transactionHistory.length > 0) {
+          const transfersDoc = await db.collection('transfers').doc('transactions').get();
+          const allTransactions = (transfersDoc.data() && transfersDoc.data().transactions) || [];
+          // Filter only user's transactions
+          const userTransactions = allTransactions.filter(tx => data.transactionHistory.includes(tx.id));
+          // Sort by date desc
+          userTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+          // Render table
+          const tbody = document.getElementById('transactions-table');
+          tbody.innerHTML = '';
+          userTransactions.slice(0, 7).forEach((tx, idx) => {
+            const date = new Date(tx.date).toLocaleString();
+            const type = tx.type === 'send' ? 'Sent' : 'Received';
+            const amount = (tx.type === 'send' && tx.senderId === user.uid) ? `- $${tx.amount}` : `+ $${tx.amount}`;
+            const status = tx.status.charAt(0).toUpperCase() + tx.status.slice(1);
+            const rowClass = tx.type === 'send' && tx.senderId === user.uid ? 'text-danger' : 'text-success';
+            tbody.innerHTML += `
+              <tr style="cursor:pointer" onclick="showTransactionModal('${encodeURIComponent(JSON.stringify(tx))}')">
+                <td>${date}</td>
+                <td>${tx.description || ''}</td>
+                <td>${type}</td>
+                <td class="${rowClass}">${amount}</td>
+                <td>${status}</td>
+              </tr>
+            `;
+            // For chart
+            const day = new Date(tx.date).toLocaleDateString();
+            if (!chartLabels.includes(day)) chartLabels.push(day);
+            if (tx.type === 'send' && tx.senderId === user.uid) {
+              expense += Number(tx.amount);
+              chartExpense[chartLabels.indexOf(day)] = (chartExpense[chartLabels.indexOf(day)] || 0) + Number(tx.amount);
+            } else {
+              income += Number(tx.amount);
+              chartIncome[chartLabels.indexOf(day)] = (chartIncome[chartLabels.indexOf(day)] || 0) + Number(tx.amount);
+            }
+          });
+          document.getElementById('income-amount').textContent = `$${income}`;
+          document.getElementById('expense-amount').textContent = `$${expense}`;
+        } else {
+          document.getElementById('transactions-table').innerHTML = `<tr><td colspan="5" class="text-center text-muted">No transactions yet.</td></tr>`;
+          document.getElementById('income-amount').textContent = `$0`;
+          document.getElementById('expense-amount').textContent = `$0`;
+        }
+        // Draw chart
+        setTimeout(() => {
+          if (chart) chart.destroy();
+          const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+          chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: chartLabels,
+              datasets: [
+                { label: 'Income', data: chartIncome, backgroundColor: '#28a745bb' },
+                { label: 'Expense', data: chartExpense, backgroundColor: '#dc3545bb' }
+              ]
+            },
+            options: {
+              responsive: true,
+              plugins: { legend: { position: 'top' } },
+              scales: { y: { beginAtZero: true } }
+            }
+          });
+        }, 200);
+      } catch (err) {
+        document.getElementById('user-balance').innerHTML = `<div class="alert alert-danger">Failed to load user data.</div>`;
+        document.getElementById('transactions-table').innerHTML = `<tr><td colspan="5" class="text-center text-danger">Error loading transactions.</td></tr>`;
+      }
+    });
+
+    // Transaction modal
+    window.showTransactionModal = function(txStr) {
+      const tx = JSON.parse(decodeURIComponent(txStr));
+      let html = `
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>Date:</strong> ${new Date(tx.date).toLocaleString()}</li>
+          <li class="list-group-item"><strong>Type:</strong> ${tx.type === 'send' ? 'Sent' : 'Received'}</li>
+          <li class="list-group-item"><strong>Amount:</strong> $${tx.amount}</li>
+          <li class="list-group-item"><strong>Status:</strong> ${tx.status}</li>
+          <li class="list-group-item"><strong>Description:</strong> ${tx.description || ''}</li>
+          <li class="list-group-item"><strong>Transaction ID:</strong> ${tx.id}</li>
+        </ul>
+      `;
+      document.getElementById('transaction-modal-body').innerHTML = html;
+      transactionModal.show();
+    };
+
+    // Logout handler
+    document.getElementById('logout-btn')?.addEventListener('click', function(e) {
+      e.preventDefault();
+      auth.signOut().then(() => window.location.href = "signin.html");
+    });
+
+ 
+  function toggleSidebar() {
+    const sidebar = document.getElementById("sidebarNav");
+    sidebar.classList.toggle("show");
+  }
+
+  </script>
+</body>
+</html>
