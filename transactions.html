@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>All Transactions - Geex Bank</title>
+  <title>All Transactions - Metronagex Bank</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@iconscout/unicons@4.0.8/css/line.min.css">
@@ -52,7 +52,7 @@
         <nav class="geex-sidebar__menu-wrapper">
           <ul class="geex-sidebar__menu">
             <li class="geex-sidebar__menu__item">
-              <a class="geex-sidebar__menu__link" href="index.html">
+              <a class="geex-sidebar__menu__link" href="dashboard.html">
                 <i class="uil uil-money-bill"></i>
                 <p>Dashboard</p>
               </a>
@@ -208,7 +208,7 @@
     function typeLabel(tx) {
       if (tx.type === 'cheque') return 'Cheque';
       if (tx.type === 'send') {
-        if (tx.receiverId) return 'Geex Transfer';
+        if (tx.receiverId) return 'Metronagex Transfer';
         return 'Other Bank';
       }
       return tx.type.charAt(0).toUpperCase() + tx.type.slice(1);
@@ -265,10 +265,10 @@
         userTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         // Analyze
-        let processing = 0, approved = 0, completed = 0, rejected = 0, chequeCount = 0, geexCount = 0, otherBankCount = 0;
+        let processing = 0, approved = 0, completed = 0, rejected = 0, chequeCount = 0, metronagexCount = 0, otherBankCount = 0;
         userTransactions.forEach(tx => {
           if (tx.type === 'cheque') chequeCount++;
-          if (tx.type === 'send' && tx.receiverId) geexCount++;
+          if (tx.type === 'send' && tx.receiverId) metronagexCount++;
           if (tx.type === 'send' && !tx.receiverId) otherBankCount++;
           if (tx.status === 'processing') processing++;
           if (tx.status === 'approved') approved++;
@@ -281,7 +281,7 @@
           <div class="mb-3">
             <span class="fw-bold">Total Transactions:</span> ${userTransactions.length}
             &nbsp;|&nbsp; <span class="fw-bold">Cheques:</span> ${chequeCount}
-            &nbsp;|&nbsp; <span class="fw-bold">Geex Transfers:</span> ${geexCount}
+            &nbsp;|&nbsp; <span class="fw-bold">Metronagex Transfers:</span> ${metronagexCount}
             &nbsp;|&nbsp; <span class="fw-bold">Other Bank:</span> ${otherBankCount}
           </div>
           <div>

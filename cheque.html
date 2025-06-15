@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Cheque Management - Geex Bank</title>
+  <title>Cheque Management - Metronagex Bank</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -403,7 +403,7 @@
     <nav class="geex-sidebar__menu-wrapper">
       <ul class="geex-sidebar__menu">
         <li class="geex-sidebar__menu__item">
-          <a class="geex-sidebar__menu__link" href="index.html">
+          <a class="geex-sidebar__menu__link" href="dashboard.html">
             <i class="uil uil-money-bill"></i>
             <p>Dashboard</p>
           </a>
@@ -580,7 +580,7 @@
     function renderCheque(cheque) {
       return `
         <div class="cheque-card">
-          <div class="cheque-header">Geex Bank Cheque</div>
+          <div class="cheque-header">Metronagex Bank Cheque</div>
           <div class="cheque-status ${cheque.status}">${cheque.status.charAt(0).toUpperCase() + cheque.status.slice(1)}</div>
           <div class="cheque-fields">
             <div>
@@ -683,7 +683,7 @@
         const chequeObj = {
           chequeId,
           chequeNumber,
-          bankName: "Geex Bank",
+          bankName: "Metronage bank",
           payerAccountNumber: userData.accountNumber || "N/A",
           payeeName,
           amount,
