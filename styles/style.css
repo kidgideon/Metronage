@@ -8981,25 +8981,17 @@ blockquote span:before {
 .geex-content__authentication__content__logo img {
   margin: 0 auto;
 }
-
 .geex-content__authentication__img {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  padding: 0 70px;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 40%;
-          flex: 0 0 40%;
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+  background-image: url("../assets/images/resource/about-9.jpg");
+  background-size: cover;         /* This makes it fill the area */
+  background-position: center;    /* Keeps the image centered */
+  background-repeat: no-repeat;   /* Prevents tiling */
+  height: 100dvh;
 }
 
+
 .geex-content__authentication__img img {
-  width: 100%;
+  object-fit: cover;
 }
 
 @media only screen and (max-width: 1440px) {
@@ -9196,7 +9188,7 @@ blockquote span:before {
   font-size: 16px;
   font-weight: 500;
   color: var(--white-color);
-  background: var(--primary-color);
+  background: black;
 }
 
 .geex-content__authentication__form-submit.return-btn {
@@ -9210,7 +9202,7 @@ blockquote span:before {
       -ms-flex-pack: center;
           justify-content: center;
   color: var(--body-color);
-  background-color: var(--primary-color-transparent);
+  background-color: black;
 }
 
 .geex-content__authentication__form-submit:hover {
