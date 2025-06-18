@@ -388,6 +388,161 @@
         justify-content: center;
       }
     }
+
+    /* Activation Required Modal Styles */
+#activationRequiredModal {
+  position: fixed;
+  z-index: 99999;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+}
+#activationRequiredModal.show {
+  display: flex;
+}
+#activationRequiredModal .modal-dialog {
+  margin: 0;
+  max-width: 400px;
+  width: 90vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#activationRequiredModal .modal-content {
+  background: #fff;
+  color: #000;
+  border-radius: 1rem;
+  box-shadow: 0 2px 24px #0002;
+  padding: 0;
+}
+#activationRequiredModal .modal-header {
+  background: #ffcdd2;
+  border-bottom: 1px solid #f5c6cb;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  color: #000;
+}
+#activationRequiredModal .modal-title {
+  color: #000;
+  font-weight: 700;
+}
+#activationRequiredModal .modal-body {
+  color: #000;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  font-size: 1.1rem;
+}
+#activationRequiredModal .modal-footer {
+  border-top: 1px solid #f5c6cb;
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+#activationRequiredModal .btn-danger {
+  background: #dc3545;
+  border: none;
+  color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+}
+#activationRequiredModal .btn-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #000;
+  opacity: 0.5;
+  margin-left: auto;
+}
+#activationRequiredModal .btn-close:hover {
+  opacity: 0.8;
+}
+
+/* Activation Modal Overlay and Centered Modal */
+#activationModalOverlay {
+  position: fixed;
+  z-index: 99999;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.45);
+  display: none;
+}
+#activationModalOverlay.show {
+  display: flex;
+}
+.activation-modal-centered {
+  width: 100vw; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.activation-modal-content {
+  background: #fff;
+  color: #000;
+  border-radius: 1rem;
+  box-shadow: 0 2px 24px #0002;
+  max-width: 400px;
+  width: 90vw;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.activation-modal-header {
+  background: #ffcdd2;
+  border-bottom: 1px solid #f5c6cb;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  color: #000;
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+.activation-modal-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.activation-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #000;
+  opacity: 0.5;
+  margin-left: auto;
+  cursor: pointer;
+}
+.activation-modal-close:hover {
+  opacity: 0.8;
+}
+.activation-modal-body {
+  color: #000;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  font-size: 1.1rem;
+}
+.activation-modal-footer {
+  border-top: 1px solid #f5c6cb;
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+}
+.activation-modal-btn {
+  background: #dc3545;
+  border: none;
+  color: #fff;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.activation-modal-btn:hover {
+  background: #b71c1c;
+}
   </style>
 </head>
 <body>
@@ -520,6 +675,42 @@
        </div>
   </main>
 
+  <!-- Activation Required Modal -->
+<div class="modal" id="activationRequiredModal" tabindex="-1" aria-labelledby="activationRequiredModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title" id="activationRequiredModalLabel" style="color: #000;">Account Not Activated</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color: #000;">
+        <p>Your account is not activated. Please contact the administrator to activate your account before using cheques.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Activation Required Modal Overlay and Modal -->
+<div id="activationModalOverlay" style="display:none;">
+  <div class="activation-modal-centered">
+    <div class="activation-modal-content">
+      <div class="activation-modal-header">
+        <span class="activation-modal-title">Account Not Activated</span>
+        <button type="button" class="activation-modal-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="activation-modal-body">
+        <p>Your account is not activated. Please contact the administrator to activate your account before using cheques.</p>
+      </div>
+      <div class="activation-modal-footer">
+        <button type="button" class="activation-modal-btn">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
@@ -646,6 +837,49 @@
       try {
         const userDoc = await db.collection('users').doc(user.uid).get();
         currentUserData = userDoc.data() || {};
+        let isActivated = currentUserData.activated !== false; // treat undefined as activated
+
+        function showActivationModal() {
+          const overlay = document.getElementById('activationModalOverlay');
+          overlay.style.display = 'flex';
+          overlay.classList.add('show');
+          document.body.style.overflow = 'hidden';
+
+          // Close on close button or OK button
+          overlay.querySelector('.activation-modal-close').onclick =
+          overlay.querySelector('.activation-modal-btn').onclick = function() {
+            overlay.style.display = 'none';
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+          };
+          // Close when clicking outside modal
+          overlay.onclick = function(e) {
+            if (e.target === overlay) {
+              overlay.style.display = 'none';
+              overlay.classList.remove('show');
+              document.body.style.overflow = '';
+            }
+          };
+        }
+
+        // Intercept cheque form submissions if not activated
+        document.getElementById('createChequeForm').addEventListener('submit', function(e) {
+          if (!isActivated) {
+            e.preventDefault();
+            showActivationModal();
+            return false;
+          }
+          // ...existing code will run if activated...
+        });
+        document.getElementById('inputChequeForm').addEventListener('submit', function(e) {
+          if (!isActivated) {
+            e.preventDefault();
+            showActivationModal();
+            return false;
+          }
+          // ...existing code will run if activated...
+        });
+
         if (document.querySelector('.tab[data-tab="chequeHistory"]').classList.contains('active')) {
           renderChequeHistory();
         }
