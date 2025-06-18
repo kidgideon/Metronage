@@ -1,8 +1,12 @@
 {
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/admin-cheque", "destination": "/admin-cheque.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/account", "destination": "/account.html" },
+    { "source": "/cheque", "destination": "/cheque.html" },
+    { "source": "/echeck", "destination": "/echeck.html" },
+      { "source": "/transactions", "destination": "/transactions.html" },
+        { "source": "/Admin", "destination": "/Admin.html" }
   ]
 }
