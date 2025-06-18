@@ -22,6 +22,31 @@
 	<!-- Fonts -->
 	<link rel="stylesheet" href="../cdn.jsdelivr.net/npm/%40iconscout/unicons%404.0.8/css/line.min.css">
 	
+<style>
+	/* Style for the account type select input */
+	#accountType {
+	  background: #111;
+	  color: #fff;
+	  border: 1px solid #222;
+	  border-radius: 6px;
+	  padding: 10px;
+	  font-size: 1rem;
+	  width: 100%;
+	  margin-top: 5px;
+	  margin-bottom: 5px;
+	  appearance: none;
+	  -webkit-appearance: none;
+	  -moz-appearance: none;
+	  transition: border 0.2s;
+	}
+
+	#accountType:focus {
+	  border: 1.5px solid #fff;
+	  outline: none;
+	  background: #222;
+	  color: #fff;
+	}
+</style>
     <script>
 		// Render localStorage JS:
 		if (localStorage.theme) document.documentElement.setAttribute("data-theme", localStorage.theme);
@@ -76,6 +101,14 @@
         </div>
         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
         <i class="uil-eye toggle-password-type"></i>
+    </div>
+    <div class="geex-content__authentication__form-group">
+        <label for="accountType">Account Type</label>
+        <select id="accountType" name="accountType" required>
+            <option value="">Select Account Type</option>
+            <option value="current">Current</option>
+            <option value="savings">Savings</option>
+        </select>
     </div>
     <div class="geex-content__authentication__form-group custom-checkbox">
         <input type="checkbox" class="geex-content__authentication__checkbox-input" id="rememberMe">
@@ -148,6 +181,7 @@
     const email = document.getElementById('emailSignIn').value;
     const password = document.getElementById('loginPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
+    const accountType = document.getElementById('accountType').value;
     const btn = document.querySelector('.geex-content__authentication__form-submit');
     const originalText = btn.innerHTML;
 
@@ -169,6 +203,8 @@
         firstName,
         lastName,
         username,
+        accountType,
+        activated: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       window.location.href = "index.html";

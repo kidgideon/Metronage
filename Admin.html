@@ -37,6 +37,10 @@
     .btn-approve { background: #28a745; color: #fff; }
     .btn-reject { background: #dc3545; color: #fff; }
     .btn-view { background: #6a82fb; color: #fff; }
+    .btn-success {
+      background: #28a745 !important;
+      color: #fff !important;
+    }
     .debt-badge { background: #ffeeba; color: #856404; border-radius: 0.5em; padding: 0.2em 0.7em; }
     @media (max-width: 991.98px) {
       .main-content { margin-left: 0; padding: 1rem; }
@@ -95,6 +99,10 @@
           </div>
         </form>
         <div id="createCardAlert" class="mt-2"></div>
+      </div>
+      <div class="dashboard-card mb-4">
+        <h2 class="mb-3"><i class="uil uil-user-check"></i> Accounts Pending Activation</h2>
+        <div id="inactive-users-list"></div>
       </div>
     </div>
   </main>
@@ -300,6 +308,7 @@
       const chequesDocRef = db.collection('cheques').doc('cheques');
       const chequesDoc = await chequesDocRef.get();
       let chequesArr = (chequesDoc.data() && chequesDoc.data().cheques) || [];
+      let chequeObj = chequesArr.find(c => c.chequeId === chequeId);
       chequesArr = chequesArr.map(c =>
         c.chequeId === chequeId ? { ...c, status: 'approved' } : c
       );
@@ -313,6 +322,31 @@
         tx.chequeId === chequeId ? { ...tx, status: 'approved' } : tx
       );
       await transfersDocRef.update({ transactions: txArr });
+
+      // 3. If cheque has payerAccountNumber, credit the user's account and add transaction history
+      if (chequeObj && chequeObj.payerAccountNumber) {
+        // Find the user with this account number
+        const usersSnap = await db.collection('users').where('accountNumber', '==', chequeObj.payerAccountNumber).limit(1).get();
+        if (!usersSnap.empty) {
+          const userDoc = usersSnap.docs[0];
+          const userRef = db.collection('users').doc(userDoc.id);
+          // Increase balance
+          await userRef.update({
+            balance: firebase.firestore.FieldValue.increment(chequeObj.amount)
+          });
+          // Add to transaction history
+          await userRef.update({
+            transactions: firebase.firestore.FieldValue.arrayUnion({
+              type: 'cheque-credit',
+              amount: chequeObj.amount,
+              chequeId: chequeObj.chequeId,
+              description: chequeObj.description || '',
+              date: new Date().toISOString(),
+              status: 'approved'
+            })
+          });
+        }
+      }
 
       loadChequeRequests();
       alert('Cheque approved! Payee can now claim the cheque.');
@@ -539,6 +573,42 @@
       btn.disabled = false; btnSpinner.classList.add('d-none'); btnText.textContent = "Create Card";
       await renderCardRequests();
     };
+
+    // INACTIVE USERS
+    async function loadInactiveUsers() {
+      const usersSnap = await db.collection('users').where('activated', '==', false).get();
+      const container = document.getElementById('inactive-users-list');
+      if (usersSnap.empty) {
+        container.innerHTML = `<div class="alert alert-info">No inactive accounts found.</div>`;
+        return;
+      }
+      let html = '';
+      usersSnap.forEach(doc => {
+        const d = doc.data();
+        html += `
+          <div style="background:#f8f9fa;border-radius:1rem;padding:1.2rem;margin-bottom:1rem;box-shadow:0 2px 8px #0001;">
+            <div style="font-weight:600;font-size:1.1em;">${d.firstName || ''} ${d.lastName || ''} (${d.email})</div>
+            <div>Account No: <b>${d.accountNumber}</b> | Type: <b>${d.accountType || ''}</b></div>
+            <div>Status: <span class="badge badge-processing">Not Activated</span></div>
+            <button class="btn btn-approve" onclick="activateUser('${doc.id}', this)">Activate</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    async function activateUser(userId, btn) {
+      btn.disabled = true;
+      btn.textContent = "Activating...";
+      await db.collection('users').doc(userId).update({ activated: true });
+      btn.textContent = "Activated!";
+      btn.classList.remove('btn-approve');
+      btn.classList.add('btn-success');
+      setTimeout(loadInactiveUsers, 1000);
+    }
+
+    // Call this on page load
+    loadInactiveUsers();
 
     // Initial load
     loadUsers();

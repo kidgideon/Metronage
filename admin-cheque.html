@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metronagex Bank - Admin Cheque Creator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #000;
+      color: #fff;
+      padding: 2rem;
+    }
+    .admin-container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #111;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+    }
+    h2, h3 {
+      color: #fff;
+      text-align: center;
+    }
+    form input,
+    form textarea,
+    form button,
+    form select {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    form input,
+    form textarea,
+    form select {
+      background-color: #222;
+      color: #fff;
+    }
+    form button {
+      background-color: #fff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+    form button:hover {
+      background-color: #ccc;
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+    }
+    .alert-success {
+      background-color: #2ecc71;
+      color: #000;
+    }
+    .alert-danger {
+      background-color: #e74c3c;
+    }
+    .cheque-item {
+      background: #1a1a1a;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+    }
+    .cheque-item input {
+      background: #000;
+      border: 1px solid #333;
+      color: #fff;
+      font-size: 0.9rem;
+    }
+    .cheque-item button {
+      background: #fff;
+      color: #000;
+      margin-top: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .cheque-card {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+    }
+    .cheque-header {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #2ecc71;
+    }
+    .cheque-fields {
+      font-size: 0.9rem;
+    }
+    .cheque-field-label {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .cheque-field-value {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <h2>Metronagex Bank</h2>
+    <h3>Admin Cheque Creator</h3>
+    <form id="adminCreateChequeForm">
+      <input type="text" id="adminFullName" placeholder="Full Name" required>
+      <textarea id="adminDescription" placeholder="Description" required></textarea>
+      <textarea id="adminContent" placeholder="Cheque Content" required></textarea>
+      <input type="number" id="adminAmount" placeholder="Amount" required>
+      <div class="form-group">
+      
+        <input type="text" class="form-control" id="adminSenderFullName" placeholder="Sender's Full Name" required>
+      </div>
+      <div class="form-group">
+        <select class="form-control" id="adminChequeType" required>
+          <option value="">Select Type</option>
+          <option value="current">Current</option>
+          <option value="savings">Savings</option>
+        </select>
+      </div>
+      <button type="submit">Create Cheque</button>
+    </form>
+    <div id="adminChequeModal"></div>
+    <h3>Created Cheques</h3>
+    <div id="adminChequeList"></div>
+  </div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function generateChequeId() {
+      return Math.floor(10000000000 + Math.random() * 90000000000).toString();
+    }
+
+    document.getElementById("adminCreateChequeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fullName = document.getElementById("adminFullName").value.trim();
+      const description = document.getElementById("adminDescription").value.trim();
+      const content = document.getElementById("adminContent").value.trim();
+      const amount = parseFloat(document.getElementById("adminAmount").value.trim());
+      const senderFullName = document.getElementById('adminSenderFullName').value.trim();
+      const chequeType = document.getElementById('adminChequeType').value;
+      const modal = document.getElementById("adminChequeModal");
+      modal.innerHTML = "";
+      modal.classList.remove("hidden");
+
+      if (!fullName || !description || !content || isNaN(amount) || amount <= 0 || !senderFullName || !chequeType) {
+        showModal("Please fill in all fields with valid data.");
+        btn.disabled = false; btnSpinner.classList.add('hidden'); btnText.textContent = "Create Cheque";
+        return;
+      }
+      const chequeId = generateChequeId();
+      const chequeObj = {
+        chequeId,
+        fullName,
+        senderFullName,
+        chequeType,
+        description,
+        content,
+        amount,
+        createdAt: new Date().toISOString(),
+        link: `https://www.metronagex.com/echeck.html?chequeId=${chequeId}`
+      };
+      try {
+        await db.collection("adminCheques").doc(chequeId).set(chequeObj);
+        modal.innerHTML = `<div class="alert alert-success">Cheque created! Link: <a href="https://www.metronagex.com/echeck.html?chequeId=${chequeId}" target="_blank">www.metronagex.com/echeck.html?chequeId=${chequeId}</a>
+        <button class="btn btn-success" style="margin-left:10px;padding:4px 10px;font-size:0.9rem;"
+          onclick="copyToClipboard('https://www.metronagex.com/echeck.html?chequeId=${chequeId}')">Copy</button>
+        </div>`;
+        e.target.reset();
+        loadAdminCheques();
+      } catch (error) {
+        modal.innerHTML = `<div class="alert alert-danger">Error creating cheque. Try again.</div>`;
+      }
+    });
+
+    async function loadAdminCheques() {
+      const container = document.getElementById("adminChequeList");
+      container.innerHTML = "Loading...";
+      const snapshot = await db.collection("adminCheques").orderBy("createdAt", "desc").get();
+      const cheques = snapshot.docs.map(doc => doc.data());
+      container.innerHTML = cheques.map(c => `
+        <div class="cheque-item">
+          <strong>${c.fullName}</strong><br/>
+          ${c.description}<br/>
+          Amount: ${c.amount}<br/>
+          <input value="cashcheque/${c.chequeId}" readonly />
+          <button onclick="navigator.clipboard.writeText('cashcheque/${c.chequeId}')">Copy Link</button>
+        </div>
+      `).join("");
+      listDiv.innerHTML = chequesArr.reverse().map(cheque => `
+  <div class="cheque-card" style="margin-bottom:20px;">
+    <div class="cheque-header">Metronagex Bank Cheque</div>
+    <div class="cheque-fields">
+      <!-- ...other fields... -->
+      <div>
+        <div class="cheque-field-label">Shareable Link</div>
+        <div class="cheque-field-value">
+          <a href="${cheque.link}" target="_blank">${cheque.link}</a>
+          <button class="btn btn-success" style="margin-left:10px;padding:4px 10px;font-size:0.9rem;"
+            onclick="copyToClipboard('${cheque.link}')">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+`).join('');
+    }
+
+    window.onload = loadAdminCheques;
+  </script>
+</body>
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>e-Cheque - Metronagex Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Fonts for cheque and signature -->
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon.svg">
+  <style>
+    body {
+      background: #e8f5e9;
+      min-height: 100vh;
+      font-family: 'Jost', 'Segoe UI', Arial, sans-serif;
+      color: #1b3c1b;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .echeque-container {
+      width: 100%;
+      max-width: 700px;
+      margin: 2.5rem 1rem;
+      background: #f6fff7;
+      border: 2.5px solid #2e7d32;
+      border-radius: 18px;
+      box-shadow: 0 4px 32px 0 rgba(46,125,50,0.10);
+      padding: 2.5rem 2rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .cheque-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.2rem;
+    }
+    .cheque-bank {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2e7d32;
+      letter-spacing: 1.5px;
+    }
+    .cheque-logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      filter: grayscale(0.2) brightness(1.1) contrast(1.1);
+    }
+    .cheque-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.7rem;
+      font-size: 1.08rem;
+    }
+    .cheque-label {
+      font-weight: 500;
+      color: #388e3c;
+      min-width: 120px;
+      letter-spacing: 0.5px;
+    }
+    .cheque-value {
+      font-weight: 600;
+      color: #1b3c1b;
+      text-align: right;
+      flex: 1;
+      margin-left: 1.2rem;
+      word-break: break-all;
+    }
+    .cheque-amount-section {
+      margin: 1.2rem 0 0.7rem 0;
+      padding: 0.7rem 1rem;
+      background: #e8f5e9;
+      border-radius: 8px;
+      border: 1.5px dashed #43a047;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .cheque-amount-digits {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2e7d32;
+      letter-spacing: 2px;
+    }
+    .cheque-amount-words {
+      font-size: 1.08rem;
+      color: #388e3c;
+      font-style: italic;
+      margin-top: 0.2rem;
+    }
+    .cheque-memo-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 1.5rem;
+      margin-bottom: 0.7rem;
+    }
+    .cheque-memo-label {
+      font-weight: 500;
+      color: #388e3c;
+      min-width: 80px;
+    }
+    .cheque-memo-value {
+      font-weight: 500;
+      color: #1b3c1b;
+      font-style: italic;
+      flex: 1;
+      margin-left: 1rem;
+      border-bottom: 1px dashed #388e3c;
+      padding-bottom: 2px;
+    }
+    .cheque-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 2.2rem;
+    }
+    .cheque-signature-area {
+      text-align: right;
+      flex: 1;
+    }
+    .cheque-signature-label {
+      font-size: 0.95rem;
+      color: #388e3c;
+      margin-bottom: 0.2rem;
+      font-weight: 500;
+    }
+    .cheque-signature-line {
+      display: inline-block;
+      border-bottom: 2.5px solid #2e7d32;
+      width: 180px;
+      height: 32px;
+      position: relative;
+      margin-bottom: 0.2rem;
+    }
+    .cheque-signature-fake {
+      position: absolute;
+      left: 10px;
+      bottom: 2px;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+      color: #2e7d32;
+      opacity: 0.85;
+      letter-spacing: 2px;
+      pointer-events: none;
+      user-select: none;
+    }
+    .loading-spinner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 2.5rem 0;
+    }
+    .spinner {
+      border: 4px solid #222;
+      border-top: 4px solid #2e7d32;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    .btn-cash {
+      display: block;
+      width: 100%;
+      padding: 1.1rem 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      margin: 2rem 0 0 0;
+      cursor: pointer;
+      box-shadow: 0 2px 8px 0 rgba(40,167,69,0.08);
+      transition: background 0.18s;
+      letter-spacing: 0.5px;
+    }
+    .btn-cash:hover, .btn-cash:focus {
+      background: #1b5e20;
+    }
+    .alert {
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 1.2rem;
+      font-size: 1.05rem;
+      text-align: center;
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+    .alert-danger {
+      background: #2a0000;
+      color: #e74c3c;
+      border: 1px solid #e74c3c;
+    }
+    .alert-info {
+      background: #181818;
+      color: #388e3c;
+      border: 1px solid #43a047;
+    }
+    .modal-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-bg.show { display: flex; }
+    .modal-content {
+      background: #fff;
+      color: #222;
+      border-radius: 14px;
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      max-width: 350px;
+      text-align: center;
+      box-shadow: 0 0 16px rgba(46,125,50,0.12);
+      position: relative;
+    }
+    .modal-content button {
+      margin-top: 1.2rem;
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .modal-content button:hover {
+      background: #1b5e20;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    @media (max-width: 700px) {
+      .echeque-container { padding: 1.2rem 0.5rem; }
+      .cheque-header { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+      .cheque-footer { flex-direction: column; align-items: flex-end; gap: 1.2rem; }
+      .cheque-signature-line { width: 120px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="echeque-container" id="chequeContainer">
+    <div class="loading-spinner"><div class="spinner"></div></div>
+  </div>
+  <!-- Modal -->
+  <div id="modalBg" class="modal-bg">
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Modal helpers
+    function showModal(msg, redirectUrl) {
+      document.getElementById('modalContent').innerHTML = msg + (redirectUrl ? `<br><button onclick="window.location.href='${redirectUrl}'">Go to Login/Signup</button>` : `<br><button onclick="hideModal()">Close</button>`);
+      document.getElementById('modalBg').classList.add('show');
+    }
+    function hideModal() {
+      document.getElementById('modalBg').classList.remove('show');
+    }
+
+    // Helper: Convert amount to words (simple version)
+    function numberToWords(num) {
+      const a = [
+        '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+        'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+      ];
+      const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+      function inWords(n) {
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
+        if (n < 1000) return a[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' and ' + inWords(n % 100) : '');
+        if (n < 1000000) return inWords(Math.floor(n / 1000)) + ' thousand' + (n % 1000 ? ' ' + inWords(n % 1000) : '');
+        return n;
+      }
+      const [whole, decimal] = num.toString().split('.');
+      let words = inWords(parseInt(whole));
+      if (decimal && parseInt(decimal) > 0) {
+        words += ' and ' + inWords(parseInt(decimal)) + ' cents';
+      }
+      return words.charAt(0).toUpperCase() + words.slice(1) + ' only';
+    }
+
+    // Get chequeId from URL
+    function getChequeId() {
+      const url = new URL(window.location.href);
+      const chequeId = url.searchParams.get('chequeId');
+      if (chequeId) return chequeId;
+      const match = window.location.pathname.match(/echeck\.html.*chequeId=(\d+)/);
+      if (match) return match[1];
+      return null;
+    }
+
+    let chequeData = null;
+    let chequeDocId = null;
+
+    async function loadCheque() {
+      const chequeContainer = document.getElementById('chequeContainer');
+      chequeContainer.innerHTML = `<div class="loading-spinner"><div class="spinner"></div></div>`;
+      chequeDocId = getChequeId();
+      if (!chequeDocId) {
+        chequeContainer.innerHTML = `<div class="alert alert-danger">Invalid cheque link.</div>`;
+        return;
+      }
+      try {
+        const doc = await db.collection('adminCheques').doc(chequeDocId).get();
+        if (!doc.exists) {
+          chequeContainer.innerHTML = `<div class="alert alert-danger">Cheque not found.</div>`;
+          return;
+        }
+        chequeData = doc.data();
+        let alreadyCashed = chequeData.cashedBy;
+        chequeContainer.innerHTML = `
+          <div class="cheque-header">
+            <div class="cheque-bank">Metronagex Bank</div>
+            <img src="assets/img/logo-dark.svg" alt="Bank Logo" class="cheque-logo">
+          </div>
+          <div class="cheque-row">
+            <span class="cheque-label">Sender:</span>
+            <span class="cheque-value">${chequeData.senderFullName || '-'}</span>
+          </div>
+          <div class="cheque-row">
+            <span class="cheque-label">Receiver:</span>
+            <span class="cheque-value">${chequeData.fullName || '-'}</span>
+          </div>
+          <div class="cheque-row">
+            <span class="cheque-label">Cheque No.:</span>
+            <span class="cheque-value">${chequeData.chequeId || '-'}</span>
+          </div>
+          <div class="cheque-row">
+            <span class="cheque-label">Issue Date:</span>
+            <span class="cheque-value">${chequeData.createdAt ? new Date(chequeData.createdAt).toLocaleDateString() : '-'}</span>
+          </div>
+          <div class="cheque-row">
+            <span class="cheque-label">Currency:</span>
+            <span class="cheque-value">${chequeData.currency || 'USD'}</span>
+          </div>
+          <div class="cheque-row">
+            <span class="cheque-label">Cheque Type:</span>
+            <span class="cheque-value">${chequeData.chequeType ? chequeData.chequeType.charAt(0).toUpperCase() + chequeData.chequeType.slice(1) : '-'}</span>
+          </div>
+          <div class="cheque-amount-section">
+            <div class="cheque-amount-digits">${chequeData.currency || 'USD'} ${Number(chequeData.amount).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</div>
+            <div class="cheque-amount-words">${numberToWords(Number(chequeData.amount))}</div>
+          </div>
+          <div class="cheque-memo-row">
+            <span class="cheque-memo-label">Memo:</span>
+            <span class="cheque-memo-value">${chequeData.description || '-'}</span>
+          </div>
+          <div class="cheque-footer">
+            <div></div>
+            <div class="cheque-signature-area">
+              <div class="cheque-signature-label">Authorized Signature</div>
+              <div class="cheque-signature-line">
+                <span class="cheque-signature-fake">${(chequeData.senderFullName && chequeData.senderFullName.split(' ')[0][0] + '. ' + (chequeData.senderFullName.split(' ')[1] || '')) || 'Signature'}</span>
+              </div>
+            </div>
+          </div>
+          <button id="cashBtn" class="btn-cash" style="display:${alreadyCashed ? 'none' : 'block'};">Cash Cheque Into Your Account</button>
+          <div id="cashInfo"></div>
+        `;
+        if (alreadyCashed) {
+          document.getElementById('cashInfo').innerHTML = `<div class="alert alert-info">This cheque has already been submitted for processing.</div>`;
+        }
+        if (!alreadyCashed) {
+          document.getElementById('cashBtn').onclick = cashCheque;
+        }
+      } catch (err) {
+        chequeContainer.innerHTML = `<div class="alert alert-danger">Error loading cheque. Please try again.</div>`;
+      }
+    }
+
+    async function cashCheque() {
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        showModal("You must be logged in to cash this cheque.", "signin.html");
+        return;
+      }
+      // Prevent double cashing
+      const doc = await db.collection('adminCheques').doc(chequeDocId).get();
+      if (doc.data().cashedBy) {
+        showModal("This cheque has already been submitted for processing.");
+        return;
+      }
+      // Get user's account number
+      const btn = document.getElementById('cashBtn');
+      btn.innerHTML = '<div class="spinner" style="margin:0 auto;"></div>';
+      btn.disabled = true;
+      try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        if (!userData || !userData.accountNumber) {
+          showModal("Your account is missing an account number. Please contact support.");
+          btn.innerHTML = 'Cash Cheque Into Your Account';
+          btn.disabled = false;
+          return;
+        }
+        // Prepare cheque object for main cheques collection
+        const newChequeId = chequeData.chequeId || chequeDocId;
+        const chequeObj = {
+          chequeId: newChequeId,
+          chequeNumber: newChequeId,
+          bankName: "Metronagex Bank",
+          payerAccountNumber: userData.accountNumber,
+          payeeName: chequeData.fullName,
+          amount: chequeData.amount,
+          currency: chequeData.currency || "USD",
+          description: chequeData.description,
+          content: chequeData.content,
+          issueDate: new Date().toISOString(),
+          status: "processing"
+        };
+        // 1. Add to central cheques array
+        const chequesDocRef = db.collection('cheques').doc('cheques');
+        await chequesDocRef.set({
+          cheques: firebase.firestore.FieldValue.arrayUnion(chequeObj)
+        }, { merge: true });
+        // 2. Add to user's chequeHistory
+        await db.collection('users').doc(user.uid).update({
+          chequeHistory: firebase.firestore.FieldValue.arrayUnion(newChequeId)
+        });
+        // 3. Mark as cashed in adminCheques
+        await db.collection('adminCheques').doc(chequeDocId).update({
+          cashedBy: user.uid,
+          cashedAt: new Date().toISOString()
+        });
+        showModal("Cheque submitted for processing. You’ll be credited once approved by admin.");
+        btn.style.display = 'none';
+      } catch (err) {
+        showModal("An error occurred. Please try again.");
+        btn.innerHTML = 'Cash Cheque Into Your Account';
+        btn.disabled = false;
+      }
+    }
+
+    window.hideModal = hideModal;
+    window.onload = loadCheque;
+  </script>
+</body>
+</html>

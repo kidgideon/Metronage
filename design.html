@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive Bank Cheque</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f1f1f1;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 30px;
+    }
+
+    .cheque {
+      max-width: 850px;
+      width: 100%;
+      background: #fff;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 25px 30px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    .cheque-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 100px;
+      height: auto;
+    }
+
+    .bank-info {
+      flex: 1;
+      text-align: left;
+    }
+
+    .bank-name {
+      font-size: 24px;
+      font-weight: bold;
+      color: #0b3d91;
+    }
+
+    .cheque-date {
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .cheque-body {
+      margin-top: 30px;
+      font-size: 16px;
+    }
+
+    .field-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .cheque-line {
+      border-bottom: 1px solid #333;
+      padding: 6px 0;
+      margin-bottom: 20px;
+    }
+
+    .amount-box {
+      border: 1px solid #333;
+      padding: 10px;
+      width: 220px;
+      text-align: center;
+      float: right;
+      margin-top: -60px;
+    }
+
+    .footer {
+      position: relative;
+      margin-top: 40px;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .signature {
+      text-align: right;
+    }
+
+    .micr {
+      font-family: 'OCR A Extended', monospace;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: 2px;
+      margin-top: 30px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    @media screen and (max-width: 768px) {
+      .amount-box {
+        float: none;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .cheque-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .footer {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .signature {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cheque">
+    <div class="cheque-header">
+      <img src="https://via.placeholder.com/100x50.png?text=Logo" alt="Bank Logo" class="logo">
+      <div class="bank-info">
+        <div class="bank-name">Metronagex Bank</div>
+        <div style="font-size: 13px;">Empowering Your Finances</div>
+      </div>
+      <div class="cheque-date">
+        Date:<br/>
+        <div class="cheque-line" style="width: 120px;"></div>
+      </div>
+    </div>
+
+    <div class="cheque-body">
+      <div>
+        <div class="field-label">Pay to the order of:</div>
+        <div class="cheque-line" style="width: 100%;"></div>
+      </div>
+
+      <div class="amount-box">
+        <div class="field-label">₦</div>
+        <div class="cheque-line"></div>
+      </div>
+
+      <div style="clear: both;"></div>
+
+      <div>
+        <div class="field-label">Amount in Words:</div>
+        <div class="cheque-line" style="width: 100%;"></div>
+      </div>
+
+      <div>
+        <div class="field-label">For:</div>
+        <div class="cheque-line" style="width: 400px;"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="account-details">
+        Account No: 1234567890<br/>
+        Sort Code: 112233<br/>
+        Branch: Metronagex HQ
+      </div>
+      <div class="signature">
+        Authorized Signature:<br/>
+        <div class="cheque-line" style="width: 200px;"></div>
+      </div>
+    </div>
+
+    <div class="micr">
+      |:123456789|: 0000123456789|| 112233
+    </div>
+
+    <div class="hint">
+      Please present this cheque at any Metronagex Bank branch for withdrawal.
+    </div>
+  </div>
+</body>
+</html>

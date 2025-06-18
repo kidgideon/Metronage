@@ -925,6 +925,24 @@
   </div>
 </div>
 
+<!-- Activation Required Modal -->
+<div class="modal" id="activationRequiredModal" tabindex="-1" aria-labelledby="activationRequiredModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title" id="activationRequiredModalLabel" style="color: #000;">Account Not Activated</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="color: #000;">
+        <p>Your account is not activated. Please contact the administrator to activate your account before making transfers.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   // Firebase config
   const firebaseConfig = {
@@ -984,6 +1002,7 @@
   const transactionPinModal = new Modal(document.getElementById('transactionPinModal'));
   const createPinModal = new Modal(document.getElementById('createPinModal'));
   const descriptionModal = new Modal(document.getElementById('descriptionModal'));
+  const activationRequiredModal = new Modal(document.getElementById('activationRequiredModal'));
 
   // Show loading spinners
   function showTransferLoading() {
@@ -1028,6 +1047,51 @@
 
       // Bank name
       document.getElementById('user-bank-name').textContent = "Metronagex Bank";
+
+      // Account activation check
+      let isActivated = data.activated !== false; // treat undefined as activated
+
+      // Helper to show the activation modal
+      function showActivationModal() {
+        const modal = document.getElementById('activationRequiredModal');
+        modal.style.display = 'block';
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        // Hide on close
+        modal.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {
+          btn.onclick = function() {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+          };
+        });
+        // Also close when clicking outside modal-content
+        modal.onclick = function(e) {
+          if (e.target === modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+          }
+        };
+      }
+
+      // Intercept form submissions if not activated
+      document.getElementById('transferFormGeex').addEventListener('submit', function(e) {
+        if (!isActivated) {
+          e.preventDefault();
+          showActivationModal();
+          return false;
+        }
+        // ...existing code will run if activated...
+      });
+      document.getElementById('transferFormOther').addEventListener('submit', function(e) {
+        if (!isActivated) {
+          e.preventDefault();
+          showActivationModal();
+          return false;
+        }
+        // ...existing code will run if activated...
+      });
     } catch (err) {
       document.getElementById('user-balance').innerHTML = `<div class="alert alert-danger">Failed to load user data.</div>`;
     }
