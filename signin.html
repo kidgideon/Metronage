@@ -42,6 +42,12 @@
 					<form id="signInForm" class="geex-content__authentication__form">
 						<h2 class="geex-content__authentication__title">Sing In to Your Account 👋</h2>
 						<div class="geex-content__authentication__form-group">
+							<label for="accountNumberSignIn">Account Number</label>
+							<input type="text" id="accountNumberSignIn" name="accountNumberSignIn" placeholder="Enter Your Account Number" required>
+							<i class="uil-credit-card"></i>
+						</div>
+						
+						<div class="geex-content__authentication__form-group">
 							<label for="emailSignIn">Your Email</label>
 							<input type="email" id="emailSignIn" name="emailSignIn" placeholder="Enter Your Email" required>
 							<i class="uil-envelope"></i>
@@ -54,6 +60,7 @@
 							<input type="password" id="loginPassword" name="loginPassword" placeholder="Password" required>
 							<i class="uil-eye toggle-password-type"></i>
 						</div>
+				
 						<div class="geex-content__authentication__form-group custom-checkbox">
 							<input type="checkbox" class="geex-content__authentication__checkbox-input" id="rememberMe">
 							<label class="geex-content__authentication__checkbox-label" for="rememberMe">Remember Me</label>
@@ -116,37 +123,48 @@
   const db = firebase.firestore();
 
   document.getElementById('signInForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const email = document.getElementById('emailSignIn').value;
-    const password = document.getElementById('loginPassword').value;
-    const btn = document.querySelector('.geex-content__authentication__form-submit');
-    const originalText = btn.innerHTML;
+  e.preventDefault();
+  const email = document.getElementById('emailSignIn').value;
+  const password = document.getElementById('loginPassword').value;
+  const accountNumber = document.getElementById('accountNumberSignIn').value.trim();
+  const btn = document.querySelector('.geex-content__authentication__form-submit');
+  const originalText = btn.innerHTML;
 
-    // Show loading
-    btn.disabled = true;
-    btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing In...`;
+  // Show loading
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing In...`;
 
-    try {
-      const userCredential = await auth.signInWithEmailAndPassword(email, password);
-      const user = userCredential.user;
+  try {
+    // First, sign in with email and password
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const user = userCredential.user;
 
-      // Optionally create user doc if not exists
-      const userRef = db.collection('users').doc(user.uid);
-      const doc = await userRef.get();
-      if (!doc.exists) {
-        await userRef.set({
-          email: user.email,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      }
-
-      window.location.href = "index.html";
-    } catch (error) {
-      showModal(error.message);
+    // Now, cross-check the account number
+    const userRef = db.collection('users').doc(user.uid);
+    const doc = await userRef.get();
+    if (!doc.exists) {
+      showModal("User record not found.");
+      await auth.signOut();
       btn.disabled = false;
       btn.innerHTML = originalText;
+      return;
     }
-  });
+    const userData = doc.data();
+    if (!userData.accountNumber || userData.accountNumber !== accountNumber) {
+      showModal("Account number does not match our records.");
+      await auth.signOut();
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+      return;
+    }
+
+    window.location.href = "index.html";
+  } catch (error) {
+    showModal(error.message);
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+});
 </script>
 
 <!-- Modal -->
