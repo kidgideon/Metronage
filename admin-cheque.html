@@ -184,13 +184,13 @@
         content,
         amount,
         createdAt: new Date().toISOString(),
-        link: `https://www.metronagex.com/echeck.html?chequeId=${chequeId}`
+        link: `https://www.metronagex.com/echeck?chequeId=${chequeId}` // Updated link format
       };
       try {
         await db.collection("adminCheques").doc(chequeId).set(chequeObj);
-        modal.innerHTML = `<div class="alert alert-success">Cheque created! Link: <a href="https://www.metronagex.com/echeck.html?chequeId=${chequeId}" target="_blank">www.metronagex.com/echeck.html?chequeId=${chequeId}</a>
+        modal.innerHTML = `<div class="alert alert-success">Cheque created! Link: <a href="https://www.metronagex.com/echeck?chequeId=${chequeId}" target="_blank">www.metronagex.com/echeck?chequeId=${chequeId}</a>
         <button class="btn btn-success" style="margin-left:10px;padding:4px 10px;font-size:0.9rem;"
-          onclick="copyToClipboard('https://www.metronagex.com/echeck.html?chequeId=${chequeId}')">Copy</button>
+          onclick="copyToClipboard('https://www.metronagex.com/echeck?chequeId=${chequeId}')">Copy</button>
         </div>`;
         e.target.reset();
         loadAdminCheques();
@@ -209,8 +209,8 @@
           <strong>${c.fullName}</strong><br/>
           ${c.description}<br/>
           Amount: ${c.amount}<br/>
-          <input value="cashcheque/${c.chequeId}" readonly />
-          <button onclick="navigator.clipboard.writeText('cashcheque/${c.chequeId}')">Copy Link</button>
+          <input value="https://www.metronagex.com/echeck?chequeId=${c.chequeId}" readonly />
+          <button onclick="navigator.clipboard.writeText('https://www.metronagex.com/echeck?chequeId=${c.chequeId}')">Copy Link</button>
         </div>
       `).join("");
       listDiv.innerHTML = chequesArr.reverse().map(cheque => `
@@ -221,9 +221,9 @@
       <div>
         <div class="cheque-field-label">Shareable Link</div>
         <div class="cheque-field-value">
-          <a href="${cheque.link}" target="_blank">${cheque.link}</a>
+          <a href="https://www.metronagex.com/echeck?chequeId=${cheque.chequeId}" target="_blank">https://www.metronagex.com/echeck?chequeId=${cheque.chequeId}</a>
           <button class="btn btn-success" style="margin-left:10px;padding:4px 10px;font-size:0.9rem;"
-            onclick="copyToClipboard('${cheque.link}')">Copy</button>
+            onclick="copyToClipboard('https://www.metronagex.com/echeck?chequeId=${cheque.chequeId}')">Copy</button>
         </div>
       </div>
     </div>

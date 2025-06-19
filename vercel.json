@@ -6,7 +6,12 @@
     { "source": "/account", "destination": "/account.html" },
     { "source": "/cheque", "destination": "/cheque.html" },
     { "source": "/echeck", "destination": "/echeck.html" },
-      { "source": "/transactions", "destination": "/transactions.html" },
-        { "source": "/Admin", "destination": "/Admin.html" }
+    { "source": "/transactions", "destination": "/transactions.html" },
+    { "source": "/Admin", "destination": "/Admin.html" },
+    { "source": "/signin", "destination": "/signin.html" },
+    { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/loan", "destination": "/loan.html" },
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/send-receive", "destination": "/send-receive.html" }
   ]
 }

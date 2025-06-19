@@ -436,7 +436,7 @@
       <div class="geex-sidebar__wrapper">
         <div class="geex-sidebar__header">
           <a class='geex-sidebar__logo' href='index.html'>
-            <img src="assets/img/logo-dark.svg" alt="logo" />
+            <img src="assets/images/logo.png" alt="logo" />
           </a>
         </div>
         <nav class="geex-sidebar__menu-wrapper">
@@ -521,10 +521,6 @@
                   <label class="form-label" for="fullName">Full Name</label>
                   <input type="text" class="form-control" id="fullName" required>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label" for="bvn">BVN</label>
-                  <input type="text" class="form-control" id="bvn" maxlength="11" pattern="\d{11}" required>
-                </div>
                 <div class="col-md-12">
                   <label class="form-label" for="address">Residential Address</label>
                   <input type="text" class="form-control" id="address" required>
@@ -551,6 +547,10 @@
                 <div class="col-md-6">
                   <label class="form-label" for="idNumber">ID Number</label>
                   <input type="text" class="form-control" id="idNumber" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="nationalId">National Identity (N.ID Number)</label>
+                  <input type="text" class="form-control" id="nationalId" maxlength="11" pattern="\d{11}" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label upload-label" for="idFront">
@@ -634,12 +634,12 @@
         document.getElementById('user-account-number').textContent = data.accountNumber || 'N/A';
         // Prefill KYC form
         document.getElementById('fullName').value = data.accountName || data.fullName || '';
-        document.getElementById('bvn').value = data.bvn || '';
         document.getElementById('address').value = data.address || '';
         document.getElementById('dob').value = data.dob || '';
         document.getElementById('phone').value = data.phone || '';
         document.getElementById('idType').value = data.idType || '';
         document.getElementById('idNumber').value = data.idNumber || '';
+        document.getElementById('nationalId').value = data.nationalId || '';
       } catch (err) {
         document.getElementById('user-name').textContent = "Error loading user";
       }
@@ -659,17 +659,17 @@
 
       // Gather form data
       const fullName = document.getElementById('fullName').value.trim();
-      const bvn = document.getElementById('bvn').value.trim();
       const address = document.getElementById('address').value.trim();
       const dob = document.getElementById('dob').value;
       const phone = document.getElementById('phone').value.trim();
       const idType = document.getElementById('idType').value;
       const idNumber = document.getElementById('idNumber').value.trim();
+      const nationalId = document.getElementById('nationalId').value.trim();
       const idFront = document.getElementById('idFront').files[0];
       const idBack = document.getElementById('idBack').files[0];
 
       // Simple validation
-      if (!fullName || !bvn || !address || !dob || !phone || !idType || !idNumber || !idFront || !idBack) {
+      if (!fullName || !address || !dob || !phone || !idType || !idNumber || !nationalId || !idFront || !idBack) {
         alertDiv.innerHTML = `<div class="alert alert-danger">Please fill all fields and upload both ID images.</div>`;
         btn.disabled = false; 
         btnSpinner.classList.add('d-none'); 
@@ -686,7 +686,7 @@
         const kycData = {
           fullName,
           accountName: fullName,
-          bvn,
+          nationalId,
           address,
           dob,
           phone,

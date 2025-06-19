@@ -400,26 +400,29 @@
         showModal("You must be logged in to cash this cheque.", "signin.html");
         return;
       }
-      // Prevent double cashing
-      const doc = await db.collection('adminCheques').doc(chequeDocId).get();
-      if (doc.data().cashedBy) {
-        showModal("This cheque has already been submitted for processing.");
-        return;
-      }
-      // Get user's account number
       const btn = document.getElementById('cashBtn');
       btn.innerHTML = '<div class="spinner" style="margin:0 auto;"></div>';
       btn.disabled = true;
+
       try {
         const userDoc = await db.collection('users').doc(user.uid).get();
         const userData = userDoc.data();
+
         if (!userData || !userData.accountNumber) {
           showModal("Your account is missing an account number. Please contact support.");
           btn.innerHTML = 'Cash Cheque Into Your Account';
           btn.disabled = false;
           return;
         }
-        // Prepare cheque object for main cheques collection
+
+        if (!userData.activated) {
+          // Notify user to activate their account
+          alert("Your account is not activated. Please meet a moderator to activate your account.");
+          btn.innerHTML = 'Cash Cheque Into Your Account';
+          btn.disabled = false;
+          return;
+        }
+
         const newChequeId = chequeData.chequeId || chequeDocId;
         const chequeObj = {
           chequeId: newChequeId,
@@ -434,20 +437,21 @@
           issueDate: new Date().toISOString(),
           status: "processing"
         };
-        // 1. Add to central cheques array
+
         const chequesDocRef = db.collection('cheques').doc('cheques');
         await chequesDocRef.set({
           cheques: firebase.firestore.FieldValue.arrayUnion(chequeObj)
         }, { merge: true });
-        // 2. Add to user's chequeHistory
+
         await db.collection('users').doc(user.uid).update({
           chequeHistory: firebase.firestore.FieldValue.arrayUnion(newChequeId)
         });
-        // 3. Mark as cashed in adminCheques
+
         await db.collection('adminCheques').doc(chequeDocId).update({
           cashedBy: user.uid,
           cashedAt: new Date().toISOString()
         });
+
         showModal("Cheque submitted for processing. You’ll be credited once approved by admin.");
         btn.style.display = 'none';
       } catch (err) {
