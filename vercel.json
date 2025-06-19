@@ -12,6 +12,7 @@
     { "source": "/signup", "destination": "/signup.html" },
     { "source": "/loan", "destination": "/loan.html" },
     { "source": "/settings", "destination": "/settings.html" },
-    { "source": "/send-receive", "destination": "/send-receive.html" }
+    { "source": "/send-receive", "destination": "/send-receive.html" },
+        { "source": "/deposit", "destination": "/deposit.html" }
   ]
 }

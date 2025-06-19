@@ -188,13 +188,13 @@ body {
 
 /* ========== CARD STYLES ========== */
 .dashboard-card-profile {
-  width: 400px;
+  width: 300px;
   height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  background: url("../assets/img/card_background3.jpg");
+  background: rgb(12, 12, 12);
   border-radius: 10px;
   margin: 10px;
   padding: 10px;
@@ -207,8 +207,7 @@ body {
 }
 
 .overview-card-balance {
-  width: 500px;
-  max-width: 550px;
+  width: 720px;
   border-radius: 12px;
   padding: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -218,6 +217,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgb(12, 12, 12);
 }
 
 .overview-card-balance .balance-section {
@@ -226,6 +226,7 @@ body {
 
 .balance-section {
   width: 100%;
+  max-width: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -245,7 +246,20 @@ body {
   align-items: center;
   justify-content: space-around;
   width: 100%;
+  max-width: 720px;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
   display: flex;
+background: rgb(12, 12, 12);
+}
+
+.quick-actions p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 13px;
 }
 
 .unecessary {
@@ -282,18 +296,72 @@ body {
   border: 3px solid #fc5c7d;
 }
 
+#user-balance {
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bln-ce {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.add-button-area {
+   width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.add-button-area button {
+  background-color: black;
+  color: white;
+  padding: 10px;
+  border-radius: 2px;
+  border: none;
+  cursor: pointer;
+}
+
+.toggle-balance-btn {
+  height: 100%;
+}
+
+#toggle-balance-btn {
+   height: 100%;
+   margin: 5px;
+}
+
+.balance-alignment-area {
+  width: 720px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 50%;
+}
+
 .chart-container {
-  width: 100%;
+  width: 700px;
   max-height: 300px;
   overflow: hidden;
+  border-radius: 10px;
+  background: #222;
+  padding: 10px;
 }
 
 .table {
-  width: 100%;
+  width: 720px;
   border-collapse: collapse;
   background: transparent;
-  color: #fff;
+  color:  wheat;
   margin-top: 1rem;
+  background-color: black;
 }
 
 .table th,
@@ -309,7 +377,7 @@ body {
 }
 
 .table-hover tbody tr:hover {
-  background: #2a0000;
+  background: rgb(56, 56, 56);
   transition: background 0.2s;
 }
 
@@ -363,6 +431,27 @@ body {
   flex-direction: column;
 }
 
+/* Toggle Balance Button */
+.toggle-balance-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: color 0.2s;
+}
+
+.toggle-balance-btn:hover {
+  color: #fc5c7d;
+}
+
+.logout-btn {
+  color: white;
+margin-left: 20px;
+text-decoration: none;
+}
+
 /* ========== UTILITY CLASSES ========== */
 .text-danger { color: #fc5c7d !important; }
 .text-success { color: #4caf50 !important; }
@@ -395,13 +484,6 @@ body {
   border-radius: 4px;
 }
 
-/* ========== MEDIA QUERIES ========== */
-@media (min-width: 768px) {
-  .overview-card-balance .quick-actions {
-      margin-top: 0;
-      margin-left: 30px;
-  }
-}
 
 @media (max-width: 991px) {
   #sidebarNav {
@@ -426,12 +508,11 @@ body {
   
   .dashboard-card-profile {
       width: 100%;
-      max-width: 400px;
+      max-width: 300px;
   }
   
   .overview-card-balance {
-      width: 350px;
-      height: 100%;
+       width: 300px;
   }
   
   .main-content {
@@ -444,6 +525,54 @@ body {
   }
   body {
     padding-left: 0px;
-    padding-top: 30px;
+    padding-top: 5px;
   }
+
+  #mastercard-component {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+  }
+
+  .dashboard-card {
+    width: 300px;
+    overflow-x: scroll;
+  }
+
+  .dashboard-card-loan {
+    width: 300px;
+    overflow-x: scroll;
+  }
+
+  
+.quick-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 300px;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  display: flex;
+}
+
+.quick-actions p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+
+.balance-alignment-area {
+  width: 300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0px;
+}
+
 }

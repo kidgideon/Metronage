@@ -746,7 +746,7 @@
                               <div class="card-body">
                                   <div class="d-flex justify-content-center mb-4 gap-3">
                                     <button id="btnGeex" class="btn btn-primary fw-bold active" type="button">
-                                      Send to Geex Bank
+                                      Send to Metronagex bank
                                     </button>
                                     <button id="btnOther" class="btn btn-outline-primary fw-bold" type="button">
                                       Send to Other Bank
@@ -1014,6 +1014,16 @@
   showTransferLoading();
 
   let currentUserData = null;
+  let isActivated = false; // Global variable to track account activation
+
+  // Helper function to block actions if the account is not activated
+  function guardIfNotActivated() {
+    if (!isActivated) {
+      showActivationModal();
+      return true; // Indicates the action should be blocked
+    }
+    return false; // Indicates the action can proceed
+  }
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
@@ -1025,77 +1035,78 @@
       const data = userDoc.data() || {};
       currentUserData = data;
 
-      // Display balance
+      // Display balance and account details
       document.getElementById('user-balance').textContent = `$ ${data.balance ?? 0}`;
-
-      // Display account number
       document.getElementById('user-account-number').textContent = data.accountNumber || 'N/A';
       document.getElementById('receiveAccountNumber').value = data.accountNumber || '';
-
-      // Display account name (firstName + lastName or fallback)
-      let accountName = '';
-      if (data.firstName && data.lastName) {
-        accountName = `${data.firstName} ${data.lastName}`;
-      } else if (data.name) {
-        accountName = data.name;
-      } else if (user.email) {
-        accountName = user.email.substring(0, 4);
-      } else {
-        accountName = 'User';
-      }
-      document.getElementById('user-account-name').textContent = accountName;
-
-      // Bank name
+      document.getElementById('user-account-name').textContent = data.firstName && data.lastName
+        ? `${data.firstName} ${data.lastName}`
+        : (data.name || 'User');
       document.getElementById('user-bank-name').textContent = "Metronagex Bank";
 
-      // Account activation check
-      let isActivated = data.activated !== false; // treat undefined as activated
+      // Check account activation
+      isActivated = data.activated !== false; // Treat undefined as activated
 
-      // Helper to show the activation modal
-      function showActivationModal() {
-        const modal = document.getElementById('activationRequiredModal');
-        modal.style.display = 'block';
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-        // Hide on close
-        modal.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {
-          btn.onclick = function() {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-            document.body.style.overflow = '';
-          };
-        });
-        // Also close when clicking outside modal-content
-        modal.onclick = function(e) {
-          if (e.target === modal) {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-            document.body.style.overflow = '';
-          }
-        };
+      if (!isActivated) {
+        showActivationModal();
       }
-
-      // Intercept form submissions if not activated
-      document.getElementById('transferFormGeex').addEventListener('submit', function(e) {
-        if (!isActivated) {
-          e.preventDefault();
-          showActivationModal();
-          return false;
-        }
-        // ...existing code will run if activated...
-      });
-      document.getElementById('transferFormOther').addEventListener('submit', function(e) {
-        if (!isActivated) {
-          e.preventDefault();
-          showActivationModal();
-          return false;
-        }
-        // ...existing code will run if activated...
-      });
     } catch (err) {
       document.getElementById('user-balance').innerHTML = `<div class="alert alert-danger">Failed to load user data.</div>`;
     }
   });
+
+  // Prevent any function execution if account is not activated
+  document.getElementById('transferFormGeex').addEventListener('submit', function(e) {
+    if (guardIfNotActivated()) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  document.getElementById('transferFormOther').addEventListener('submit', function(e) {
+    if (guardIfNotActivated()) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  document.getElementById('btnGeex').addEventListener('click', function(e) {
+    if (guardIfNotActivated()) {
+      e.stopImmediatePropagation();
+      return false;
+    }
+  });
+
+  document.getElementById('btnOther').addEventListener('click', function(e) {
+    if (guardIfNotActivated()) {
+      e.stopImmediatePropagation();
+      return false;
+    }
+  });
+
+  // Helper to show the activation modal
+  function showActivationModal() {
+    const modal = document.getElementById('activationRequiredModal');
+    modal.style.display = 'block';
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+
+    modal.querySelectorAll('[data-dismiss="modal"]').forEach(btn => {
+      btn.onclick = function() {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+      };
+    });
+
+    modal.onclick = function(e) {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+    };
+  }
 
   // Copy account number
   document.getElementById('copyAccountBtn').onclick = function() {
