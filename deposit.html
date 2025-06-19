@@ -162,14 +162,15 @@
 ">
   <h1 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #00ffe1;">Payment Methods</h1>
 
-  <div class="payment-methods" style="
+  <div style="
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
   ">
 
-    <div class="method" style="
+    <!-- USDT -->
+    <div style="
       flex: 1 1 280px;
       min-width: 260px;
       max-width: 320px;
@@ -183,10 +184,22 @@
     " onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
       <h4 style="font-size: 22px; margin-bottom: 8px; color: #fff;">USDT</h4>
       <h6 style="font-size: 14px; color: #ccc; margin: 4px 0;">Network: TRC20</h6>
-      <h5 style="font-size: 14px; color: #00ffe1; overflow-wrap: break-word; word-break: break-all;">TVGB7RNeQL3AHqZXhJTS3CzzpnpsiFKLBS</h5>
+      <h5 id="usdtAddress" style="font-size: 14px; color: #00ffe1; overflow-wrap: break-word; word-break: break-all;">TVGB7RNeQL3AHqZXhJTS3CzzpnpsiFKLBS</h5>
+      <button onclick="copyToClipboard('usdtAddress', this)" style="
+        margin-top: 10px;
+        padding: 6px 12px;
+        font-size: 14px;
+        background-color: #00ffe1;
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      ">Copy Address</button>
     </div>
 
-    <div class="method" style="
+    <!-- Bitcoin -->
+    <div style="
       flex: 1 1 280px;
       min-width: 260px;
       max-width: 320px;
@@ -200,10 +213,22 @@
     " onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
       <h4 style="font-size: 22px; margin-bottom: 8px; color: #fff;">Bitcoin</h4>
       <h6 style="font-size: 14px; color: #ccc; margin: 4px 0;">Network: BTC</h6>
-      <h5 style="font-size: 14px; color: #00ffe1; overflow-wrap: break-word; word-break: break-all;">bc1q34u4rx89fmycaesp9r7yann6knspmzvj6qh53h</h5>
+      <h5 id="btcAddress" style="font-size: 14px; color: #00ffe1; overflow-wrap: break-word; word-break: break-all;">bc1q34u4rx89fmycaesp9r7yann6knspmzvj6qh53h</h5>
+      <button onclick="copyToClipboard('btcAddress', this)" style="
+        margin-top: 10px;
+        padding: 6px 12px;
+        font-size: 14px;
+        background-color: #00ffe1;
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      ">Copy Address</button>
     </div>
 
-    <div class="method" style="
+    <!-- Ethereum -->
+    <div style="
       flex: 1 1 280px;
       min-width: 260px;
       max-width: 320px;
@@ -217,11 +242,38 @@
     " onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
       <h4 style="font-size: 22px; margin-bottom: 8px; color: #fff;">Ethereum</h4>
       <h6 style="font-size: 14px; color: #ccc; margin: 4px 0;">Network: ETH</h6>
-      <h5 style="font-size: 14px; color: #00ffe1; overflow-wrap: break-word; word-break: break-all;">0xC98284A9aa50D9D8f130Bb42b11dd395B746Ef75</h5>
+      <h5 id="ethAddress" style="font-size: 14px; color: #00ffe1; overflow-wrap: break-word; word-break: break-all;">0xC98284A9aa50D9D8f130Bb42b11dd395B746Ef75</h5>
+      <button onclick="copyToClipboard('ethAddress', this)" style="
+        margin-top: 10px;
+        padding: 6px 12px;
+        font-size: 14px;
+        background-color: #00ffe1;
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      ">Copy Address</button>
     </div>
 
   </div>
 </div>
+
+<script>
+  function copyToClipboard(elementId, btn) {
+    const addressText = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(addressText).then(() => {
+      const originalText = btn.innerText;
+      btn.innerText = "Copied!";
+      setTimeout(() => {
+        btn.innerText = originalText;
+      }, 1500);
+    }).catch(err => {
+      alert("Failed to copy address.");
+    });
+  }
+</script>
+
 
 
         </div>
