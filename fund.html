@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Fund - Metronagex Bank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@iconscout/unicons@4.0.8/css/line.min.css" />
+  <link rel="stylesheet" href="./styles/index.css" />
+  <style>
+    body {
+      background: #f4f6fb;
+      color: #343a40;
+      font-family: 'Jost', sans-serif;
+      min-height: 100vh;
+    }
+    .main-content {
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .dashboard-card {
+      background: #fff;
+      border-radius: 1.25rem;
+      box-shadow: 0 2px 24px 0 rgba(80,80,120,0.08);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .search-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #e9ecef;
+      font-size: 1.1rem;
+      background: #f8f9fa;
+      color: #343a40;
+      transition: border .2s;
+    }
+    .search-bar input:focus {
+      border: 1.5px solid #6a82fb;
+      outline: none;
+    }
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1.5rem;
+    }
+    .user-card {
+      background: #f8f9fa;
+      border-radius: 1rem;
+      box-shadow: 0 2px 12px #0001;
+      padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+      transition: box-shadow .2s, transform .2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid transparent;
+      animation: fadeInUp .5s;
+    }
+    .user-card:hover {
+      box-shadow: 0 6px 24px #6a82fb22;
+      border: 2px solid #6a82fb;
+      transform: translateY(-2px) scale(1.02);
+    }
+    .user-card .user-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: .5rem;
+      color: #343a40;
+    }
+    .user-card .user-email {
+      font-size: .97rem;
+      color: #6c757d;
+      margin-bottom: .5rem;
+    }
+    .user-card .user-balance {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #28a745;
+      margin-bottom: .5rem;
+    }
+    .user-card .last-fund {
+      font-size: .93rem;
+      color: #888;
+      margin-bottom: .5rem;
+    }
+    .user-card .account-number {
+      font-size: .93rem;
+      color: #555;
+      margin-bottom: .5rem;
+    }
+    .user-card .fund-btn {
+      margin-top: .7rem;
+      width: 100%;
+      background: linear-gradient(90deg, #6a82fb, #fc5c7d);
+      color: #fff;
+      border: none;
+      border-radius: .5rem;
+      padding: .6rem 0;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .user-card .fund-btn:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.45);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity .2s;
+    }
+    .modal.show {
+      display: flex;
+      animation: fadeInUp .3s;
+    }
+    .modal-content {
+      background: #fff;
+      color: #343a40;
+      border-radius: 1rem;
+      box-shadow: 0 2px 24px #0002;
+      padding: 2.2rem 2rem 1.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      animation: fadeInUp .3s;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1.1rem; right: 1.2rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #888;
+      cursor: pointer;
+      opacity: .7;
+      transition: opacity .2s;
+    }
+    .modal-close:hover { opacity: 1; }
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-label {
+      font-weight: 500;
+      margin-bottom: .3rem;
+      display: block;
+    }
+    .form-control {
+      width: 100%;
+      padding: .7rem 1rem;
+      border-radius: .5rem;
+      border: 1px solid #e9ecef;
+      font-size: 1.05rem;
+      background: #f8f9fa;
+      color: #343a40;
+      transition: border .2s;
+    }
+    .form-control:focus {
+      border: 1.5px solid #6a82fb;
+      outline: none;
+    }
+    .btn {
+      padding: 0.7rem 1.2rem;
+      border-radius: 0.5rem;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: background .2s;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #6a82fb, #fc5c7d);
+      color: #fff;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      color: #fff;
+    }
+    .btn:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+    }
+    .toast {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      min-width: 220px;
+      background: #fff;
+      color: #343a40;
+      border-radius: .7rem;
+      box-shadow: 0 2px 16px #0002;
+      padding: 1rem 1.5rem;
+      z-index: 99999;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s, transform .3s;
+      transform: translateY(-30px);
+    }
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .spinner {
+      display: inline-block;
+      width: 1.2em;
+      height: 1.2em;
+      border: 2.5px solid #6a82fb;
+      border-top: 2.5px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: .5em;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0);}
+      100% { transform: rotate(360deg);}
+    }
+    @media (max-width: 700px) {
+      .dashboard-card { padding: 1rem; }
+      .modal-content { padding: 1.2rem 0.7rem 1rem 0.7rem; }
+      .toast { right: 1rem; top: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="main-content">
+    <div class="container">
+      <div class="dashboard-card">
+        <h2 class="mb-4" style="font-weight:700;"><i class="uil uil-money-bill"></i> Admin Fund Panel</h2>
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Search users by name or email..." autocomplete="off" />
+        </div>
+        <div id="resultsContainer" class="user-grid"></div>
+        <div id="pagination" style="margin-top:2rem; text-align:center;"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Fund Modal -->
+  <div id="fundModal" class="modal" tabindex="-1">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal" aria-label="Close">&times;</button>
+      <h4 class="mb-3" style="font-weight:600;">Fund User</h4>
+      <form id="fundForm" autocomplete="off">
+        <input type="hidden" id="selectedUserId" />
+        <div class="form-group">
+          <label for="funderName" class="form-label">Funder Name</label>
+          <input type="text" id="funderName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label for="fundAmount" class="form-label">Amount</label>
+          <input type="number" id="fundAmount" class="form-control" min="1" required />
+        </div>
+        <button type="submit" class="btn btn-primary w-100" id="sendBtn">
+          <span id="sendBtnText">Send</span>
+          <span id="sendBtnSpinner" class="spinner" style="display:none;"></span>
+        </button>
+        <button type="button" class="btn btn-secondary w-100 mt-2" id="cancelBtn">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Firebase & Logic -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+  <script>
+    // --- Firebase Setup ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    // --- UI Elements ---
+    const resultsContainer = document.getElementById('resultsContainer');
+    const searchInput = document.getElementById('searchInput');
+    const fundModal = document.getElementById('fundModal');
+    const fundForm = document.getElementById('fundForm');
+    const funderName = document.getElementById('funderName');
+    const fundAmount = document.getElementById('fundAmount');
+    const selectedUserId = document.getElementById('selectedUserId');
+    const closeModal = document.getElementById('closeModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const sendBtn = document.getElementById('sendBtn');
+    const sendBtnText = document.getElementById('sendBtnText');
+    const sendBtnSpinner = document.getElementById('sendBtnSpinner');
+    const toast = document.getElementById('toast');
+    const pagination = document.getElementById('pagination');
+
+    let users = [];
+    let filteredUsers = [];
+    let currentPage = 1;
+    const pageSize = 12;
+
+    // --- Toast Feedback ---
+    function showToast(msg, type = "success") {
+      toast.textContent = msg;
+      toast.style.background = type === "success" ? "#d4edda" : "#f8d7da";
+      toast.style.color = type === "success" ? "#155724" : "#721c24";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    // --- Modal Logic ---
+    function openFundModal(userId) {
+      selectedUserId.value = userId;
+      funderName.value = "";
+      fundAmount.value = "";
+      fundModal.classList.add("show");
+      funderName.focus();
+    }
+    function closeFundModal() {
+      fundModal.classList.remove("show");
+    }
+    closeModal.onclick = cancelBtn.onclick = closeFundModal;
+    window.onclick = function(e) {
+      if (e.target === fundModal) closeFundModal();
+    };
+
+    // --- User Search & Pagination ---
+    function renderUsersPage(page = 1) {
+      const start = (page - 1) * pageSize;
+      const end = start + pageSize;
+      const pageUsers = filteredUsers.slice(start, end);
+      resultsContainer.innerHTML = pageUsers.map(user => `
+        <div class="user-card" data-userid="${user.id}">
+          <div class="user-name">${user.firstName || ""} ${user.lastName || ""}</div>
+          <div class="user-email"><i class="uil uil-envelope"></i> ${user.email || ""}</div>
+          <div class="account-number"><i class="uil uil-credit-card"></i> ${user.accountNumber || ""}</div>
+          <div class="user-balance">₦${user.balance?.toLocaleString() ?? 0}</div>
+          <div class="last-fund"><i class="uil uil-clock"></i> Last Fund: ${user.lastFundDate ? new Date(user.lastFundDate).toLocaleString() : "Never"}</div>
+          <button class="fund-btn" data-userid="${user.id}"><i class="uil uil-plus"></i> Fund</button>
+        </div>
+      `).join('') || `<div style="grid-column:1/-1;text-align:center;color:#888;">No users found.</div>`;
+
+      // Pagination
+      const totalPages = Math.ceil(filteredUsers.length / pageSize);
+      let pagHtml = "";
+      if (totalPages > 1) {
+        for (let i = 1; i <= totalPages; i++) {
+          pagHtml += `<button class="btn btn-secondary" style="margin:0 2px;${i===page?'background:#6a82fb;color:#fff;':''}" data-page="${i}">${i}</button>`;
+        }
+      }
+      pagination.innerHTML = pagHtml;
+    }
+
+    function filterUsers(query) {
+      query = query.trim().toLowerCase();
+      if (!query) return users;
+      return users.filter(u =>
+        (u.firstName && u.firstName.toLowerCase().includes(query)) ||
+        (u.lastName && u.lastName.toLowerCase().includes(query)) ||
+        (u.email && u.email.toLowerCase().includes(query)) ||
+        (u.accountNumber && u.accountNumber.includes(query))
+      );
+    }
+
+    // --- Debounce for Live Search ---
+    let searchTimeout = null;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        filteredUsers = filterUsers(searchInput.value);
+        currentPage = 1;
+        renderUsersPage(currentPage);
+      }, 250);
+    });
+
+    // --- Pagination Click ---
+    pagination.addEventListener('click', function(e) {
+      if (e.target.tagName === "BUTTON" && e.target.dataset.page) {
+        currentPage = parseInt(e.target.dataset.page);
+        renderUsersPage(currentPage);
+      }
+    });
+
+    // --- User Card Click (Delegate) ---
+    resultsContainer.addEventListener('click', function(e) {
+      const btn = e.target.closest('.fund-btn');
+      if (btn) {
+        openFundModal(btn.dataset.userid);
+      }
+    });
+
+    // --- Load Users from Firestore ---
+    async function loadUsers() {
+      const snap = await db.collection('users').orderBy('firstName').get();
+      users = snap.docs.map(doc => {
+        const d = doc.data();
+        // Find last admin-fund transaction for this user
+        let lastFundDate = null;
+        if (Array.isArray(d.transactionHistory)) {
+          for (let i = d.transactionHistory.length - 1; i >= 0; i--) {
+            const tx = d.transactionHistory[i];
+            if (tx && tx.type === "admin-fund") {
+              lastFundDate = tx.date;
+              break;
+            }
+          }
+        }
+        return {
+          id: doc.id,
+          ...d,
+          lastFundDate
+        };
+      });
+      filteredUsers = users;
+      renderUsersPage(currentPage);
+    }
+
+    // --- Auth Check & Init ---
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = 'signin.html';
+      } else {
+        loadUsers();
+      }
+    });
+
+    // --- Fund Form Submission ---
+    fundForm.onsubmit = async function(e) {
+      e.preventDefault();
+      const userId = selectedUserId.value;
+      const name = funderName.value.trim();
+      const amount = parseFloat(fundAmount.value);
+      if (!userId || !name || isNaN(amount) || amount <= 0) {
+        showToast("Please enter a valid funder name and positive amount.", "error");
+        return;
+      }
+      sendBtn.disabled = true;
+      sendBtnText.style.display = "none";
+      sendBtnSpinner.style.display = "inline-block";
+      try {
+        // Get user doc for transactionHistory
+        const userRef = db.collection('users').doc(userId);
+        const userSnap = await userRef.get();
+        const userData = userSnap.data() || {};
+        const txId = `admin-${Date.now()}`;
+        const txObj = {
+          id: txId,
+          amount,
+          funder: name,
+          type: "admin-fund",
+          status: "completed",
+          receiverId: userId,
+          date: new Date().toISOString()
+        };
+        // Update balance and transactionHistory (append txObj)
+        await userRef.update({
+          balance: firebase.firestore.FieldValue.increment(amount),
+          transactionHistory: firebase.firestore.FieldValue.arrayUnion(txObj)
+        });
+        // Add to global transactions collection
+        await db.collection('transfers').doc('transactions').set({
+          transactions: firebase.firestore.FieldValue.arrayUnion(txObj)
+        }, { merge: true });
+        showToast("User successfully funded.", "success");
+        closeFundModal();
+        loadUsers();
+      } catch (err) {
+        showToast("Error funding user.", "error");
+      }
+      sendBtn.disabled = false;
+      sendBtnText.style.display = "";
+      sendBtnSpinner.style.display = "none";
+    };
+  </script>
+</body>
+</html>
