@@ -981,6 +981,25 @@
       const displayDiv = document.getElementById('foundChequeDisplay');
       btn.disabled = true; btnSpinner.classList.remove('hidden'); btnText.textContent = "Searching..."; alertDiv.innerHTML = ""; displayDiv.innerHTML = "";
       try {
+        // 1. Check adminCheques collection by chequeNumber or chequeId
+        let foundInAdmin = false;
+        let adminCheque = null;
+        // Try to find by chequeNumber in adminCheques
+        const adminChequesSnap = await db.collection('adminCheques').get();
+        adminChequesSnap.forEach(doc => {
+          const data = doc.data();
+          if (data.chequeNumber === chequeNumber || doc.id === chequeNumber) {
+            foundInAdmin = true;
+            adminCheque = data;
+          }
+        });
+        if (foundInAdmin) {
+          alertDiv.innerHTML = `<div class="alert alert-danger">This cheque can only be cashed from the cheque link. Please contact support.</div>`;
+          btn.disabled = false; btnSpinner.classList.add('hidden'); btnText.textContent = "Find Cheque";
+          return;
+        }
+
+        // 2. Continue with normal cheque search
         const chequesDoc = await db.collection('cheques').doc('cheques').get();
         const chequesArr = (chequesDoc.data() && chequesDoc.data().cheques) || [];
         const cheque = chequesArr.find(c => c.chequeNumber === chequeNumber);
