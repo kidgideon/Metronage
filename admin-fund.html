@@ -29,6 +29,7 @@
       flex-direction: column;
       padding: 10px 0px;
     }
+
     .form-control {
       width: 90%;
       padding: 10px;
@@ -57,10 +58,12 @@
       border-radius: 0.4rem;
       margin-top: 1rem;
     }
+
     .alert-success {
       background: #28a745;
       color: white;
     }
+
     .alert-danger {
       background: #dc3545;
       color: white;
@@ -77,19 +80,17 @@
     }
 
     @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
   <div class="card">
     <h2 class="mb-4">Fund User Account</h2>
-    <input type="text" id="accountNumber" class="form-control" placeholder="User Account Number" />
+    <select id="userSelect" class="form-control">
+      <option value="">Select User</option>
+    </select>
     <input type="number" id="amount" class="form-control" placeholder="Amount to Fund" />
     <input type="text" id="description" class="form-control" placeholder="Description (optional)" />
     <button id="fundBtn" class="btn">Fund User</button>
@@ -113,41 +114,51 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    document.getElementById('fundBtn').onclick = async () => {
-      const accNum = Number(document.getElementById('accountNumber').value.trim());
+    const userSelect = document.getElementById('userSelect');
+    const fundBtn = document.getElementById('fundBtn');
+    const alertBox = document.getElementById('alertBox');
+
+    let usersMap = {}; // key = userId, value = full user doc
+
+    // Load all users
+    async function loadUsers() {
+      const snap = await db.collection('users').get();
+      snap.forEach(doc => {
+        const data = doc.data();
+        const fullName = (data.firstName || '') + ' ' + (data.lastName || '');
+        const label = `${fullName.trim()} - (${data.accountNumber || 'N/A'})`;
+        const option = document.createElement('option');
+        option.value = doc.id;
+        option.textContent = label;
+        userSelect.appendChild(option);
+        usersMap[doc.id] = data;
+      });
+    }
+
+    loadUsers();
+
+    fundBtn.onclick = async () => {
+      const userId = userSelect.value;
       const amount = parseFloat(document.getElementById('amount').value);
       const desc = document.getElementById('description').value.trim();
-      const alertBox = document.getElementById('alertBox');
-      const fundBtn = document.getElementById('fundBtn');
 
       alertBox.innerHTML = '';
-      fundBtn.disabled = true;  // Disable button
-      fundBtn.innerHTML = 'Funding... <span class="spinner"></span>';  // Add spinner
+      fundBtn.disabled = true;
+      fundBtn.innerHTML = 'Funding... <span class="spinner"></span>';
 
-      if (!accNum || isNaN(amount) || amount <= 0) {
+      if (!userId || isNaN(amount) || amount <= 0) {
         fundBtn.disabled = false;
-        fundBtn.innerHTML = 'Fund User'; // Reset button text
-        return showAlert('Invalid input', 'danger');
+        fundBtn.innerHTML = 'Fund User';
+        return showAlert('Please select user and valid amount', 'danger');
       }
 
       try {
-        const userSnap = await db.collection('users').where('accountNumber', '==', accNum).limit(1).get();
-        if (userSnap.empty) {
-          fundBtn.disabled = false;
-          fundBtn.innerHTML = 'Fund User'; // Reset button text
-          return showAlert('Account not found', 'danger');
-        }
+        const userData = usersMap[userId];
 
-        const userDoc = userSnap.docs[0];
-        const userId = userDoc.id;
-        const userData = userDoc.data();
-
-        // Update balance
         await db.collection('users').doc(userId).update({
           balance: firebase.firestore.FieldValue.increment(amount)
         });
 
-        // Create transaction object
         const transactionId = Math.floor(10000000000 + Math.random() * 90000000000).toString();
         const transaction = {
           id: transactionId,
@@ -159,26 +170,24 @@
           receiverId: userId
         };
 
-        // Update global transfers
         await db.collection('transfers').doc('transactions').set({
           transactions: firebase.firestore.FieldValue.arrayUnion(transaction)
         }, { merge: true });
 
-        // Add to user transactionHistory
         await db.collection('users').doc(userId).update({
           transactionHistory: firebase.firestore.FieldValue.arrayUnion(transactionId)
         });
 
         showAlert('Account funded successfully', 'success');
-        document.getElementById('accountNumber').value = '';
+        userSelect.value = '';
         document.getElementById('amount').value = '';
         document.getElementById('description').value = '';
       } catch (err) {
-        showAlert('Error funding account', 'danger');
         console.error(err);
+        showAlert('Error funding account', 'danger');
       } finally {
         fundBtn.disabled = false;
-        fundBtn.innerHTML = 'Fund User'; // Reset button text
+        fundBtn.innerHTML = 'Fund User';
       }
 
       function showAlert(msg, type) {
