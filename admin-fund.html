@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Fund User - Admin Panel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="./styles/index.css" />
   <style>
     body {
       font-family: 'Jost', sans-serif;
@@ -21,26 +20,25 @@
 
     .card {
       background: #222;
-      padding: 2rem;
       border-radius: 1rem;
       width: 100%;
-      max-width: 450px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      max-width: 350px;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      
+      padding: 10px 0px;
     }
     .form-control {
-      width: 100%;
-      padding: 0.8rem;
+      width: 90%;
+      padding: 10px;
       border-radius: 0.4rem;
       border: none;
       margin-bottom: 1rem;
     }
+
     .btn {
-      width: 100%;
+      width: 90%;
       padding: 0.8rem;
       border-radius: 0.4rem;
       background: #3b3b3b;
@@ -48,6 +46,12 @@
       font-weight: bold;
       cursor: pointer;
     }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      background: #555;
+    }
+
     .alert {
       padding: 0.8rem;
       border-radius: 0.4rem;
@@ -60,6 +64,25 @@
     .alert-danger {
       background: #dc3545;
       color: white;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
@@ -91,19 +114,29 @@
     const db = firebase.firestore();
 
     document.getElementById('fundBtn').onclick = async () => {
-      const accNum = document.getElementById('accountNumber').value.trim();
+      const accNum = Number(document.getElementById('accountNumber').value.trim());
       const amount = parseFloat(document.getElementById('amount').value);
       const desc = document.getElementById('description').value.trim();
       const alertBox = document.getElementById('alertBox');
+      const fundBtn = document.getElementById('fundBtn');
 
       alertBox.innerHTML = '';
+      fundBtn.disabled = true;  // Disable button
+      fundBtn.innerHTML = 'Funding... <span class="spinner"></span>';  // Add spinner
+
       if (!accNum || isNaN(amount) || amount <= 0) {
+        fundBtn.disabled = false;
+        fundBtn.innerHTML = 'Fund User'; // Reset button text
         return showAlert('Invalid input', 'danger');
       }
 
       try {
         const userSnap = await db.collection('users').where('accountNumber', '==', accNum).limit(1).get();
-        if (userSnap.empty) return showAlert('Account not found', 'danger');
+        if (userSnap.empty) {
+          fundBtn.disabled = false;
+          fundBtn.innerHTML = 'Fund User'; // Reset button text
+          return showAlert('Account not found', 'danger');
+        }
 
         const userDoc = userSnap.docs[0];
         const userId = userDoc.id;
@@ -143,6 +176,9 @@
       } catch (err) {
         showAlert('Error funding account', 'danger');
         console.error(err);
+      } finally {
+        fundBtn.disabled = false;
+        fundBtn.innerHTML = 'Fund User'; // Reset button text
       }
 
       function showAlert(msg, type) {
