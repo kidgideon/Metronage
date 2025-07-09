@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fund User - Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./styles/index.css" />
+  <style>
+    body {
+      font-family: 'Jost', sans-serif;
+      background: #000;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      width: 100%;
+      min-height: 100dvh;
+      overflow: hidden;
+    }
+
+    .card {
+      background: #222;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 0.4rem;
+      border: none;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 0.4rem;
+      background: #3b3b3b;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .alert {
+      padding: 0.8rem;
+      border-radius: 0.4rem;
+      margin-top: 1rem;
+    }
+    .alert-success {
+      background: #28a745;
+      color: white;
+    }
+    .alert-danger {
+      background: #dc3545;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 class="mb-4">Fund User Account</h2>
+    <input type="text" id="accountNumber" class="form-control" placeholder="User Account Number" />
+    <input type="number" id="amount" class="form-control" placeholder="Amount to Fund" />
+    <input type="text" id="description" class="form-control" placeholder="Description (optional)" />
+    <button id="fundBtn" class="btn">Fund User</button>
+    <div id="alertBox"></div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCc5qqnnE9B23WrrDUvrqYzUKM1VqrRD-s",
+      authDomain: "bank-app-3071f.firebaseapp.com",
+      projectId: "bank-app-3071f",
+      storageBucket: "bank-app-3071f.appspot.com",
+      messagingSenderId: "322072685602",
+      appId: "1:322072685602:web:bc929044a9634cae672e7b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    document.getElementById('fundBtn').onclick = async () => {
+      const accNum = document.getElementById('accountNumber').value.trim();
+      const amount = parseFloat(document.getElementById('amount').value);
+      const desc = document.getElementById('description').value.trim();
+      const alertBox = document.getElementById('alertBox');
+
+      alertBox.innerHTML = '';
+      if (!accNum || isNaN(amount) || amount <= 0) {
+        return showAlert('Invalid input', 'danger');
+      }
+
+      try {
+        const userSnap = await db.collection('users').where('accountNumber', '==', accNum).limit(1).get();
+        if (userSnap.empty) return showAlert('Account not found', 'danger');
+
+        const userDoc = userSnap.docs[0];
+        const userId = userDoc.id;
+        const userData = userDoc.data();
+
+        // Update balance
+        await db.collection('users').doc(userId).update({
+          balance: firebase.firestore.FieldValue.increment(amount)
+        });
+
+        // Create transaction object
+        const transactionId = Math.floor(10000000000 + Math.random() * 90000000000).toString();
+        const transaction = {
+          id: transactionId,
+          type: 'fund',
+          amount: amount,
+          description: desc || `Admin funded account`,
+          status: 'completed',
+          date: new Date().toISOString(),
+          receiverId: userId
+        };
+
+        // Update global transfers
+        await db.collection('transfers').doc('transactions').set({
+          transactions: firebase.firestore.FieldValue.arrayUnion(transaction)
+        }, { merge: true });
+
+        // Add to user transactionHistory
+        await db.collection('users').doc(userId).update({
+          transactionHistory: firebase.firestore.FieldValue.arrayUnion(transactionId)
+        });
+
+        showAlert('Account funded successfully', 'success');
+        document.getElementById('accountNumber').value = '';
+        document.getElementById('amount').value = '';
+        document.getElementById('description').value = '';
+      } catch (err) {
+        showAlert('Error funding account', 'danger');
+        console.error(err);
+      }
+
+      function showAlert(msg, type) {
+        alertBox.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+      }
+    };
+  </script>
+</body>
+</html>
