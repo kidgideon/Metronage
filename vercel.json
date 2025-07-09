@@ -13,6 +13,7 @@
     { "source": "/loan", "destination": "/loan.html" },
     { "source": "/settings", "destination": "/settings.html" },
     { "source": "/send-receive", "destination": "/send-receive.html" },
-        { "source": "/deposit", "destination": "/deposit.html" }
+        { "source": "/deposit", "destination": "/deposit.html" },
+            { "source": "/fund", "destination": "/admin-fund.html" }
   ]
 }
